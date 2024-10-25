@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int                 @id @default(autoincrement())
+  email       String              @unique
+  username    String              @db.VarChar(80)
+  password    String              @db.VarChar(200)
+  role        Role                @default(USER)
+  Project     Project[]
+  Task        Task[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  contributes ProjectContribute[]
+  Activity    Activity[]
+}
+
+model Project {
+  id          Int                 @id() @default(autoincrement())
+  name        String              @db.VarChar(100)
+  description String              @db.Text()
+  staus       ProjectStatus       @default(ACTIVE)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  owner       User?               @relation(fields: [ownerId], references: [id])
+  ownerId     Int
+  isPublic    Boolean             @default(true)
+  Task        Task[]
+  contributer ProjectContribute[]
+  Activity    Activity[]
+}
+
+model ProjectContribute {
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  joinedAt  DateTime @default(now())
+
+  @@id([projectId, userId])
+}
+
+model Task {
+  id          Int        @id() @default(autoincrement())
+  title       String     @db.VarChar(200)
+  description String     @db.VarChar(200)
+  status      TaskStatus @default(INQUEUE)
+  priority    Priority   @default(LOW)
+  dueDate     DateTime?
+  Project     Project    @relation(fields: [ProjectId], references: [id])
+  ProjectId   Int
+  User        User?      @relation(fields: [userId], references: [id])
+  userId      Int?
+  Activity    Activity[]
+}
+
+model Activity {
+  id        Int      @id() @default(autoincrement())
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  task      Task     @relation(fields: [taskId], references: [id])
+  taskId    Int
+  action    String   @db.VarChar(100)
+  date      DateTime @default(now())
+}
+
+enum Priority {
+  HIGH
+  MID
+  LOW
+}
+
+enum TaskStatus {
+  PENDING
+  DONE
+  INQUEUE
+}
+
+enum ProjectStatus {
+  ACTIVE
+  DIACTIVE
+  COMPLETE
+}
+
+enum Role {
+  ADMIN
+  USER
+  OWNER
+}
