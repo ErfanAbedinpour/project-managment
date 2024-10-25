@@ -125,3 +125,49 @@ PostgreSQL یا MongoDB: به عنوان پایگاه داده
 مزایای این پروژه
 این پروژه بسیاری از مفاهیم کلیدی مانند ماژولار بودن، استفاده از دکوریتورها، middleware، و guards در NestJS را پوشش می‌دهد.
 برای کارهای پیشرفته‌تر می‌توانید از تکنیک‌هایی مثل Queue Management با Bull.js برای وظایف سنگین یا مدیریت بهتر استفاده کنید.
+
+### Resources
+
+## User
+
+- id
+- username
+- email
+- password
+- role (ادمین، مدیر پروژه، کاربر عادی)
+- createdAt
+- updatedAt
+
+## Project
+
+- id
+- name
+- description
+- status (فعال، غیرفعال، تکمیل‌شده)
+- startDate
+- endDate
+- createdAt
+- updatedAt
+- ownerId (شناسه مدیر پروژه)
+
+## Task
+
+- id
+- title
+- description
+- status (در صف، در حال انجام، انجام‌شده)
+- priority (بالا، متوسط، پایین)
+- dueDate
+- createdAt
+- updatedAt
+- assignedTo (شناسه کاربری که تسک به او تخصیص یافته)
+- projectId (شناسه پروژه مرتبط)
+
+## ActivityLog
+
+- id
+- userId (شناسه کاربری که فعالیت را انجام داده)
+- projectId (شناسه پروژه مربوطه)
+- taskId (شناسه تسک مربوطه - در صورت وجود)
+- action (نوع فعالیت مثل ایجاد، به‌روزرسانی، حذف)
+- timestamp
