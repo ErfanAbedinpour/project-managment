@@ -14,37 +14,39 @@ datasource db {
 }
 
 model User {
-  id          Int                 @id @default(autoincrement())
-  email       String              @unique
-  username    String              @db.VarChar(80)
-  password    String              @db.VarChar(200)
-  role        Role                @default(USER)
-  Project     Project[]
-  Task        Task[]
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  contributes ProjectContribute[]
-  Activity    Activity[]
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  username     String         @unique @db.VarChar(80)
+  display_name String         @db.VarChar(50)
+  password     String         @db.VarChar(200)
+  role         Role           @default(USER)
+  profile      String         @db.VarChar(200)
+  Project      Project[]
+  Task         Task[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  UserProjects UserProjects[]
+  Activity     Activity[]
 }
 
 model Project {
-  id          Int                 @id() @default(autoincrement())
-  name        String              @db.VarChar(100)
-  description String              @db.Text()
-  staus       ProjectStatus       @default(ACTIVE)
-  startDate   DateTime?
-  endDate     DateTime?
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  owner       User?               @relation(fields: [ownerId], references: [id])
-  ownerId     Int
-  isPublic    Boolean             @default(true)
-  Task        Task[]
-  contributer ProjectContribute[]
-  Activity    Activity[]
+  id           Int            @id() @default(autoincrement())
+  name         String         @db.VarChar(100)
+  description  String         @db.Text()
+  staus        ProjectStatus  @default(ACTIVE)
+  startDate    DateTime?
+  endDate      DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  owner        User?          @relation(fields: [ownerId], references: [id])
+  ownerId      Int
+  isPublic     Boolean        @default(true)
+  Task         Task[]
+  UserProjects UserProjects[]
+  Activity     Activity[]
 }
 
-model ProjectContribute {
+model UserProjects {
   project   Project  @relation(fields: [projectId], references: [id])
   projectId Int
   user      User     @relation(fields: [userId], references: [id])
