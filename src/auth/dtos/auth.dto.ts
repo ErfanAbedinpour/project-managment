@@ -1,12 +1,13 @@
+import { Exclude} from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
   IsNumber,
-  isString,
   IsString,
   MaxLength,
   MinLength,
 } from 'class-validator';
+
 
 export class UserDTO{
     //display name
@@ -23,6 +24,8 @@ export class UserDTO{
     @IsNotEmpty()
     @IsString()
     profile:string
+    @Exclude()
+    password:string
 }
 
 export class CreateUserDTO{
