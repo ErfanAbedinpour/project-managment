@@ -14,7 +14,6 @@ class SerializeResponse implements NestInterceptor{
         return next.handle().pipe(
             map((data:unknown)=>{
                 const serializeResp = plainToClass(this.dto,data,{excludeExtraneousValues:true,enableImplicitConversion:true})
-                console.log(serializeResp)
                 return serializeResp
             })
         )    
