@@ -20,7 +20,7 @@ model User {
   display_name String         @db.VarChar(50)
   password     String         @db.VarChar(200)
   role         Role           @default(USER)
-  profile      String         @db.VarChar(200)
+  profile      String?        @default("default") @db.VarChar(200)
   Project      Project[]
   Task         Task[]
   createdAt    DateTime       @default(now())
