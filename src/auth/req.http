@@ -1,6 +1,7 @@
 ### register new user
 POST http://localhost:3000/auth/singup
 Content-Type: application/json
+Authorization: Bearer alskjdfklasdflgjklasdkljfakljfd
 
 {
     "email":"milad.wtf44@gmail.com",
