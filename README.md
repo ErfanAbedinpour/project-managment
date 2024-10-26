@@ -58,116 +58,154 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Resources
+# پروژه مدیریت تسک‌ها و پروژه‌ها
 
-Check out a few resources that may come in handy when working with NestJS:
+## مقدمه
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+این سیستم مدیریت پروژه و تسک، به تیم‌ها و کاربران کمک می‌کند تا وظایف و پروژه‌ها را به آسانی مدیریت کنند. هر کاربر می‌تواند نقش‌های مختلفی داشته باشد که سطح دسترسی و وظایف آن‌ها را تعیین می‌کند. همچنین تاریخچه فعالیت‌ها برای هر پروژه و تسک نگهداری می‌شود.
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## نقش‌ها و وظایف (Roles and Responsibilities)
 
-## Stay in touch
+### 1. ادمین (Admin)
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- دسترسی کامل به همه منابع و داده‌ها
+- مدیریت کاربران: افزودن، ویرایش و حذف کاربران
+- مدیریت پروژه‌ها: ایجاد، ویرایش و حذف پروژه‌ها
+- مدیریت تسک‌ها: ایجاد، ویرایش، تخصیص و حذف تسک‌ها
+- مشاهده و مدیریت تاریخچه فعالیت‌ها
 
-## License
+### 2. مدیر پروژه (Project Manager)
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- دسترسی کامل به پروژه‌های تحت مدیریت خود
+- مدیریت کاربران در پروژه خود: تخصیص کاربران به پروژه
+- مدیریت تسک‌ها در پروژه: ایجاد، ویرایش، تخصیص و حذف تسک‌ها
+- مشاهده و مدیریت تاریخچه فعالیت‌های پروژه خود
+- مشاهده و تولید گزارش‌های پروژه
 
-## Project Description
+### 3. کاربر عادی (Regular User)
 
-ایده پروژه: سیستم مدیریت تسک‌ها و پروژه‌ها
-این پروژه شامل ایجاد و مدیریت پروژه‌ها و تسک‌ها، اختصاص آن‌ها به کاربران مختلف، و پیگیری وضعیت‌ها است. با پیاده‌سازی آن می‌توانید مهارت‌های خود را در زمینه‌ی طراحی و پیاده‌سازی APIها و مدیریت پایگاه داده به نمایش بگذارید.
+- مشاهده پروژه‌هایی که عضو آن‌ها است
+- مشاهده و ویرایش تسک‌های اختصاص‌یافته به خود
+- تغییر وضعیت تسک‌های اختصاص‌یافته به خود
+- مشاهده تاریخچه فعالیت‌های مربوط به تسک‌های خود
 
-ویژگی‌های پیشنهادی:
-مدیریت کاربران:
+---
 
-ایجاد و حذف کاربران
-مدیریت نقش‌ها (مثلاً ادمین، مدیر پروژه، کاربر عادی)
-مدیریت پروژه‌ها:
+## منابع (Resources)
 
-افزودن و حذف پروژه‌ها
-تخصیص اعضا به پروژه‌ها
-مشاهده‌ی وضعیت کلی پروژه
-مدیریت تسک‌ها:
+### 1. کاربر (User)
 
-ایجاد، به‌روزرسانی، و حذف تسک‌ها
-مشخص کردن وضعیت تسک (انجام نشده، در حال انجام، انجام شده)
-تخصیص تسک‌ها به کاربران خاص
-اضافه کردن تاریخ‌های شروع و پایان به تسک‌ها
-ثبت فعالیت‌ها:
+- **پراپرتی‌ها**:
 
-ثبت تاریخچه‌ای از تغییرات روی هر پروژه یا تسک (چه کسی چه تغییری داد و در چه زمانی)
-استفاده از سیستم رویدادها (Event-based system) برای ثبت و ذخیره فعالیت‌ها
-احراز هویت و مجوزها:
+  - `id`: شناسه کاربر
+  - `username`:(یکتا) نام کاربری
+  - `display_name` نام نمایش پروفایل
+  - `profile` پروفایل
+  - `email`: ایمیل
+  - `password`: رمز عبور (hashed)
+  - `role`: نقش (ادمین، مدیر پروژه، کاربر عادی)
+  - `createdAt`: تاریخ ایجاد
+  - `updatedAt`: تاریخ آخرین به‌روزرسانی
 
-استفاده از JWT برای احراز هویت کاربران
-اعمال سطح دسترسی‌ها به هر قسمت از پروژه
-مستندسازی API:
+### 2. پروژه (Project)
 
-استفاده از Swagger برای مستندسازی APIها به‌طور کامل، تا دیگران بتوانند به راحتی API شما را تست و بررسی کنند.
-تکنولوژی‌ها و ابزارهای پیشنهادی
-NestJS: به عنوان فریمورک اصلی
-TypeORM یا Prisma: برای مدیریت ارتباط با پایگاه داده
-JWT: برای احراز هویت
-Swagger: برای مستندسازی API
-PostgreSQL یا MongoDB: به عنوان پایگاه داده
-مزایای این پروژه
-این پروژه بسیاری از مفاهیم کلیدی مانند ماژولار بودن، استفاده از دکوریتورها، middleware، و guards در NestJS را پوشش می‌دهد.
-برای کارهای پیشرفته‌تر می‌توانید از تکنیک‌هایی مثل Queue Management با Bull.js برای وظایف سنگین یا مدیریت بهتر استفاده کنید.
+- **پراپرتی‌ها**:
+  - `id`: شناسه پروژه
+  - `name`: نام پروژه
+  - `description`: توضیحات پروژه
+  - `status`: وضعیت (فعال، غیرفعال، تکمیل‌شده)
+  - `startDate`: تاریخ شروع
+  - `endDate`: تاریخ پایان
+  - `createdAt`: تاریخ ایجاد
+  - `updatedAt`: تاریخ آخرین به‌روزرسانی
+  - `ownerId`: شناسه مدیر پروژه
 
-### Resources
+### 3. تسک (Task)
 
-## User
+- **پراپرتی‌ها**:
+  - `id`: شناسه تسک
+  - `title`: عنوان تسک
+  - `description`: توضیحات تسک
+  - `status`: وضعیت (در صف، در حال انجام، انجام‌شده)
+  - `priority`: اولویت (بالا، متوسط، پایین)
+  - `dueDate`: تاریخ مهلت
+  - `createdAt`: تاریخ ایجاد
+  - `updatedAt`: تاریخ آخرین به‌روزرسانی
+  - `assignedTo`: شناسه کاربری که تسک به او تخصیص یافته
+  - `projectId`: شناسه پروژه مرتبط
 
-- id
-- username
-- email
-- password
-- role (ادمین، مدیر پروژه، کاربر عادی)
-- createdAt
-- updatedAt
+### 4. تاریخچه فعالیت‌ها (ActivityLog)
 
-## Project
+- **پراپرتی‌ها**:
+  - `id`: شناسه فعالیت
+  - `userId`: شناسه کاربری که فعالیت را انجام داده
+  - `projectId`: شناسه پروژه مربوطه
+  - `taskId`: شناسه تسک مربوطه (در صورت وجود)
+  - `action`: نوع فعالیت (مثل ایجاد، به‌روزرسانی، حذف)
+  - `timestamp`: زمان انجام فعالیت
 
-- id
-- name
-- description
-- status (فعال، غیرفعال، تکمیل‌شده)
-- startDate
-- endDate
-- createdAt
-- updatedAt
-- ownerId (شناسه مدیر پروژه)
+---
 
-## Task
+## روابط بین منابع
 
-- id
-- title
-- description
-- status (در صف، در حال انجام، انجام‌شده)
-- priority (بالا، متوسط، پایین)
-- dueDate
-- createdAt
-- updatedAt
-- assignedTo (شناسه کاربری که تسک به او تخصیص یافته)
-- projectId (شناسه پروژه مرتبط)
+1. **User to Project**: Many-to-Many (هر کاربر می‌تواند در چندین پروژه عضو باشد و هر پروژه می‌تواند چندین کاربر داشته باشد.)
+2. **Project to Task**: One-to-Many (هر پروژه شامل چندین تسک است و هر تسک فقط به یک پروژه تعلق دارد.)
+3. **User to Task**: One-to-Many (هر کاربر می‌تواند مسئول چندین تسک باشد، ولی هر تسک فقط یک مسئول دارد.)
+4. **User to ActivityLog**: One-to-Many (هر کاربر می‌تواند فعالیت‌های مختلفی را ثبت کند.)
+5. **Project to ActivityLog**: One-to-Many (هر پروژه می‌تواند دارای چندین فعالیت ثبت‌شده باشد.)
+6. **Task to ActivityLog**: One-to-Many (هر تسک می‌تواند دارای چندین فعالیت مرتبط باشد.)
 
-## ActivityLog
+---
 
-- id
-- userId (شناسه کاربری که فعالیت را انجام داده)
-- projectId (شناسه پروژه مربوطه)
-- taskId (شناسه تسک مربوطه - در صورت وجود)
-- action (نوع فعالیت مثل ایجاد، به‌روزرسانی، حذف)
-- timestamp
+## عملیات مجاز برای هر نقش
+
+| عملیات                | ادمین               | مدیر پروژه                       | کاربر عادی                           |
+| --------------------- | ------------------- | -------------------------------- | ------------------------------------ |
+| **مدیریت کاربران**    | افزودن، ویرایش، حذف | ندارد                            | ندارد                                |
+| **مدیریت پروژه‌ها**   | ایجاد، ویرایش، حذف  | پروژه‌های خود                    | مشاهده پروژه‌های عضو                 |
+| **مدیریت تسک‌ها**     | ایجاد، ویرایش، حذف  | ایجاد و ویرایش تسک‌های پروژه خود | مشاهده و ویرایش تسک‌های اختصاص یافته |
+| **تاریخچه فعالیت‌ها** | مشاهده و ویرایش     | مشاهده فعالیت‌های پروژه خود      | مشاهده فعالیت‌های تسک خود            |
+
+---
+
+## ساختار پایگاه داده و جداول (Database Structure)
+
+1. **جدول Users**: شامل اطلاعات کاربران.
+2. **جدول Projects**: شامل اطلاعات پروژه‌ها.
+3. **جدول Tasks**: شامل اطلاعات تسک‌ها.
+4. **جدول ActivityLogs**: شامل تاریخچه فعالیت‌ها.
+5. **جدول UserProjects**: جدول واسط برای رابطه Many-to-Many بین کاربران و پروژه‌ها.
+
+---
+
+## مستندسازی APIها
+
+### 1. APIهای کاربران (Users)
+
+- **ایجاد کاربر**: `/api/users` (روش `POST`)
+- **مشاهده لیست کاربران**: `/api/users` (روش `GET`)
+- **ویرایش کاربر**: `/api/users/:id` (روش `PATCH`)
+- **حذف کاربر**: `/api/users/:id` (روش `DELETE`)
+
+### 2. APIهای پروژه‌ها (Projects)
+
+- **ایجاد پروژه**: `/api/projects` (روش `POST`)
+- **مشاهده لیست پروژه‌ها**: `/api/projects` (روش `GET`)
+- **ویرایش پروژه**: `/api/projects/:id` (روش `PATCH`)
+- **حذف پروژه**: `/api/projects/:id` (روش `DELETE`)
+
+### 3. APIهای تسک‌ها (Tasks)
+
+- **ایجاد تسک**: `/api/tasks` (روش `POST`)
+- **مشاهده لیست تسک‌ها**: `/api/tasks` (روش `GET`)
+- **ویرایش تسک**: `/api/tasks/:id` (روش `PATCH`)
+- **حذف تسک**: `/api/tasks/:id` (روش `DELETE`)
+
+### 4. APIهای تاریخچه فعالیت‌ها (ActivityLogs)
+
+- **مشاهده لیست فعالیت‌ها**: `/api/activity-logs` (روش `GET`)
+- **مشاهده فعالیت‌های یک تسک یا پروژه خاص**: `/api/activity-logs?taskId=:taskId&projectId=:projectId` (روش `GET`)
+
+---
