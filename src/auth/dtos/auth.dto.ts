@@ -1,4 +1,4 @@
-import { Exclude} from 'class-transformer';
+import { Exclude, Expose} from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -11,16 +11,20 @@ import {
 
 export class UserDTO{
     //display name
+    @Expose()
     @IsNotEmpty()
     display_name:string
     //email
+    @Expose()
     @IsNotEmpty()
     @IsEmail()
     email:string;
     //username
+    @Expose()
     @IsNotEmpty()
     @IsString()
     username:string;
+    @Expose()
     @IsNotEmpty()
     @IsString()
     profile:string
