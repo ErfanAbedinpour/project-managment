@@ -7,10 +7,10 @@ export class UserServices {
   constructor(private readonly prisma: PrismaService) {}
 
   async user(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
+    where: Prisma.UserWhereInput,
   ): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
+    return this.prisma.user.findFirst({
+      where: where,
     });
   }
 
