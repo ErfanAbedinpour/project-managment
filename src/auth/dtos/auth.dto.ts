@@ -1,6 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
+  IsNumber,
   isString,
   IsString,
   MaxLength,
@@ -53,4 +54,22 @@ export class LoginUserDTO{
     @MinLength(8)
     @MaxLength(80)
     password:string;
+}
+
+
+export class TokenPaylaod{
+  @IsNotEmpty()
+  @IsNumber()
+  id:number
+  @IsNotEmpty()
+  @IsString()
+  username:string;
+  @IsNotEmpty()
+  @IsString()
+  role:string;
+  @IsEmail()
+  email:string;
+  @IsString()
+  @IsNotEmpty()
+  display_name:string
 }
