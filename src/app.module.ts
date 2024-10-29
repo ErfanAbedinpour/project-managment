@@ -7,7 +7,10 @@ import { join } from 'path';
 
 
 @Module({
-  imports: [ConfigModule.forRoot({cache:true,isGlobal:true,envFilePath:join(__dirname,'..',`.env.${process.env.NODE_ENV}`)}),AuthModule,PrismaModule,UserModule],
+  imports: [
+    ConfigModule.forRoot({cache:true,isGlobal:true,
+    envFilePath:join(process.cwd(),`.env.${process.env.NODE_ENV}`)}),
+    AuthModule,PrismaModule,UserModule],
   controllers: [],
   providers: [],
 })
