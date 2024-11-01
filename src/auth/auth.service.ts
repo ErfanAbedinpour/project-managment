@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { CreateUserDTO, LoginUserDTO, TokenPaylaod} from "./dtos/auth.dto";
-import { UserServices } from "src/user/user.service";
-import { UtilService } from "src/util/util.service";
 import {JwtService} from '@nestjs/jwt'
+import { UserServices } from "../user/user.service";
+import { UtilService } from "../util/util.service";
 
 
 @Injectable()

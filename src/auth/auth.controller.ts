@@ -1,8 +1,8 @@
 import { BadRequestException, Body, ClassSerializerInterceptor, Controller, InternalServerErrorException, Post, UseInterceptors } from "@nestjs/common";
 import { CreateUserDTO, LoginUserDTO, UserDTO, } from "./dtos/auth.dto";
 import { AuthService } from "./auth.service";
-import { ResponseSerializer } from "src/interceptor/response.interceptor";
 import { LoginResponseDTO } from "./dtos/auth.response.dto";
+import { ResponseSerializer } from "../interceptor/response.interceptor";
 
 
 @Controller('auth')

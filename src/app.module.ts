@@ -11,7 +11,5 @@ import { join } from 'path';
     ConfigModule.forRoot({cache:true,isGlobal:true,
     envFilePath:join(process.cwd(),`.env.${process.env.NODE_ENV}`)}),
     AuthModule,PrismaModule,UserModule],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}
