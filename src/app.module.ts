@@ -8,8 +8,7 @@ import { join } from 'path';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({cache:true,isGlobal:true,
-    envFilePath:join(process.cwd(),`.env.${process.env.NODE_ENV}`)}),
+    ConfigModule.forRoot({cache:true, envFilePath:join(process.cwd(),`.env.test`)}),
     AuthModule,PrismaModule,UserModule],
 })
 export class AppModule {}
