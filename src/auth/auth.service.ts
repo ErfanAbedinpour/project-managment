@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateUserDTO, LoginUserDTO, TokenPaylaod} from "./dtos/auth.dto";
 import {JwtService} from '@nestjs/jwt'
 import { UserServices } from "../user/user.service";
 import { UtilService } from "../util/util.service";
+import { NotFoundError } from "rxjs";
 
 
 @Injectable()
@@ -41,7 +42,7 @@ export class AuthService{
         try{
             const user = await this.userService.user({OR:[{email:identify},{username:identify}]});
             if(!user)
-                throw new BadRequestException("user does not found")
+                throw new NotFoundException("user does not found")
 
             if(!(await this.util.verify(password,user.password)))
                 throw new BadRequestException("identify or password are incorrect")
