@@ -1,49 +1,115 @@
-import { Test } from "@nestjs/testing"
-import { PrismaService } from "../../prisma/prisma.service"
-import { UserServices } from "../user.service"
-import { Prisma, PrismaClient, User } from "@prisma/client";
-import { PrismaModule } from "../../prisma/prisma.module";
-import { ConfigModule } from "@nestjs/config";
-import { join } from "path";
+import { Test } from '@nestjs/testing';
+import { PrismaService } from '../../prisma/prisma.service';
+import { UserServices } from '../user.service';
+import { Prisma, PrismaClient, User } from '@prisma/client';
+import { PrismaModule } from '../../prisma/prisma.module';
+import { ConfigModule } from '@nestjs/config';
+import { join } from 'path';
+import { CreateUserDTO } from 'src/auth/dtos/auth.dto';
+import { AuthService } from 'src/auth/auth.service';
 
+describe('user Service', () => {
+  let userService: UserServices;
 
+  const user: CreateUserDTO = {
+    username: 'user1',
+    email: 'email1@gmail.com',
+    password: '12341234',
+    display_name: 'nice',
+  };
+  const user2 = {
+    username: 'user2',
+    email: 'email2@gmail.com',
+    password: '12341234',
+    display_name: 'nice',
+  };
+  const user3 = {
+    username: 'user3',
+    email: 'email3@gmail.com',
+    password: '12341234',
+    display_name: 'nice',
+  };
 
-describe("user Service",()=>{
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: join(process.cwd(), `.env.test`),
+        }),
+        PrismaModule,
+      ],
+      providers: [UserServices],
+    }).compile();
 
-    let userService:UserServices;
+    userService = module.get<UserServices>(UserServices);
+    await Promise.all([
+      userService.createUser(user),
+      userService.createUser(user2),
+      userService.createUser(user3),
+    ]);
+  });
 
-    beforeEach(async ()=>{
+  afterAll(async () => {
+    const client = new PrismaClient();
+    await client.user.deleteMany();
+    await client.$disconnect();
+  });
 
-        const module = await Test.createTestingModule({
-            imports:[ConfigModule.forRoot({
-            envFilePath:join(process.cwd(),`.env.test`)}),PrismaModule],
-            providers:[UserServices]
-        }).compile()
-        
+  it('should be created user', async () => {
+    const fakeUser: CreateUserDTO = {
+      username: 'this is new username',
+      email: 'faleMail@gmail.com',
+      display_name: 'nicee',
+      password: '12341324',
+    };
 
-        userService = module.get<UserServices>(UserServices);
-        
-    })
+    const createdUser = await userService.createUser(fakeUser);
 
-    afterAll(async ()=>{
-        const  client = new PrismaClient();
-        await client.user.deleteMany() 
-        await client.$disconnect();
-    })
+    expect(createdUser.username).toEqual(fakeUser.username);
+    expect(createdUser.email).toEqual(fakeUser.email);
+    expect(createdUser.role).toEqual('USER');
+  });
 
+  it('should be find user ', async () => {
+    const targetUser = await userService.user({ username: user.username });
 
-    it("should be created user",async ()=>{
-        let user = {
-            username:"mmd",
-            email:"erfan@gmail.com",
-            password:"12341342",
-            display_name:"erfan"
-        } as User
+    expect(targetUser.email).toEqual(user.email);
+    expect(targetUser.username).toEqual(user.username);
+  });
 
-        const findUser = await userService.createUser(user);
+  it('should be returned multiple user', async () => {
+    const users = await userService.users({ where: { display_name: 'nice' } });
 
-        expect(findUser.username).toEqual(user.username)
-        expect(findUser.email).toEqual(user.email)
-        expect(findUser.role).toEqual('USER')
-    })
-})
+    expect(users.length).toEqual(3);
+
+    for (const u of users) {
+      expect(u.display_name).toEqual('nice');
+    }
+  });
+
+  it('should be change user2 username to new usename', async () => {
+    const newUser = await userService.updateUser({
+      where: { username: user2.username },
+      data: {
+        username: 'newUser2',
+      },
+    });
+
+    //change user2 username to new username
+    user2.username = newUser.username;
+    // tests
+    expect(newUser.username).toEqual('newUser2');
+    expect(newUser.email).toEqual(user2.email);
+    expect(newUser.password).toEqual(user2.password);
+  });
+
+  it('should be deleted user2', async () => {
+    await userService.deleteUser({ username: user2.username });
+
+    const user = await userService.user({
+      username: user2.username,
+    });
+    // expect user2 to be removed form DB
+    expect(user).toBeNull();
+  });
+});
