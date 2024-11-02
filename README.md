@@ -58,154 +58,183 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-# پروژه مدیریت تسک‌ها و پروژه‌ها
+# Project and Task Management System
 
-## مقدمه
+## Overview
 
-این سیستم مدیریت پروژه و تسک، به تیم‌ها و کاربران کمک می‌کند تا وظایف و پروژه‌ها را به آسانی مدیریت کنند. هر کاربر می‌تواند نقش‌های مختلفی داشته باشد که سطح دسترسی و وظایف آن‌ها را تعیین می‌کند. همچنین تاریخچه فعالیت‌ها برای هر پروژه و تسک نگهداری می‌شود.
-
----
-
-## نقش‌ها و وظایف (Roles and Responsibilities)
-
-### 1. ادمین (Admin)
-
-- دسترسی کامل به همه منابع و داده‌ها
-- مدیریت کاربران: افزودن، ویرایش و حذف کاربران
-- مدیریت پروژه‌ها: ایجاد، ویرایش و حذف پروژه‌ها
-- مدیریت تسک‌ها: ایجاد، ویرایش، تخصیص و حذف تسک‌ها
-- مشاهده و مدیریت تاریخچه فعالیت‌ها
-
-### 2. مدیر پروژه (Project Manager)
-
-- دسترسی کامل به پروژه‌های تحت مدیریت خود
-- مدیریت کاربران در پروژه خود: تخصیص کاربران به پروژه
-- مدیریت تسک‌ها در پروژه: ایجاد، ویرایش، تخصیص و حذف تسک‌ها
-- مشاهده و مدیریت تاریخچه فعالیت‌های پروژه خود
-- مشاهده و تولید گزارش‌های پروژه
-
-### 3. کاربر عادی (Regular User)
-
-- مشاهده پروژه‌هایی که عضو آن‌ها است
-- مشاهده و ویرایش تسک‌های اختصاص‌یافته به خود
-- تغییر وضعیت تسک‌های اختصاص‌یافته به خود
-- مشاهده تاریخچه فعالیت‌های مربوط به تسک‌های خود
+This project management system helps teams and users manage tasks and projects easily. Each user can have different roles, defining their level of access and responsibilities. The system also maintains a history of activities for each project and task.
 
 ---
 
-## منابع (Resources)
+## Roles and Responsibilities
 
-### 1. کاربر (User)
+### 1. Admin
 
-- **پراپرتی‌ها**:
+- Full access to all resources and data
+- User management: add, edit, and delete users
+- Project management: create, edit, and delete projects
+- Task management: create, edit, assign, and delete tasks
+- View and manage activity logs
 
-  - `id`: شناسه کاربر
-  - `username`:(یکتا) نام کاربری
-  - `display_name` نام نمایش پروفایل
-  - `profile` پروفایل
-  - `email`: ایمیل
-  - `password`: رمز عبور (hashed)
-  - `role`: نقش (ادمین، مدیر پروژه، کاربر عادی)
-  - `createdAt`: تاریخ ایجاد
-  - `updatedAt`: تاریخ آخرین به‌روزرسانی
+### 2. Project Manager
 
-### 2. پروژه (Project)
+- Full access to their assigned projects
+- Manage users within their project: assign users to the project
+- Manage tasks in the project: create, edit, assign, and delete tasks
+- View and manage project activity logs
+- Generate project reports
 
-- **پراپرتی‌ها**:
-  - `id`: شناسه پروژه
-  - `name`: نام پروژه
-  - `description`: توضیحات پروژه
-  - `status`: وضعیت (فعال، غیرفعال، تکمیل‌شده)
-  - `startDate`: تاریخ شروع
-  - `endDate`: تاریخ پایان
-  - `createdAt`: تاریخ ایجاد
-  - `updatedAt`: تاریخ آخرین به‌روزرسانی
-  - `ownerId`: شناسه مدیر پروژه
+### 3. Regular User
 
-### 3. تسک (Task)
-
-- **پراپرتی‌ها**:
-  - `id`: شناسه تسک
-  - `title`: عنوان تسک
-  - `description`: توضیحات تسک
-  - `status`: وضعیت (در صف، در حال انجام، انجام‌شده)
-  - `priority`: اولویت (بالا، متوسط، پایین)
-  - `dueDate`: تاریخ مهلت
-  - `createdAt`: تاریخ ایجاد
-  - `updatedAt`: تاریخ آخرین به‌روزرسانی
-  - `assignedTo`: شناسه کاربری که تسک به او تخصیص یافته
-  - `projectId`: شناسه پروژه مرتبط
-
-### 4. تاریخچه فعالیت‌ها (ActivityLog)
-
-- **پراپرتی‌ها**:
-  - `id`: شناسه فعالیت
-  - `userId`: شناسه کاربری که فعالیت را انجام داده
-  - `projectId`: شناسه پروژه مربوطه
-  - `taskId`: شناسه تسک مربوطه (در صورت وجود)
-  - `action`: نوع فعالیت (مثل ایجاد، به‌روزرسانی، حذف)
-  - `timestamp`: زمان انجام فعالیت
+- View projects they are a part of
+- View and edit assigned tasks
+- Change the status of assigned tasks
+- View activity logs related to their tasks
 
 ---
 
-## روابط بین منابع
+## Resources
 
-1. **User to Project**: Many-to-Many (هر کاربر می‌تواند در چندین پروژه عضو باشد و هر پروژه می‌تواند چندین کاربر داشته باشد.)
-2. **Project to Task**: One-to-Many (هر پروژه شامل چندین تسک است و هر تسک فقط به یک پروژه تعلق دارد.)
-3. **User to Task**: One-to-Many (هر کاربر می‌تواند مسئول چندین تسک باشد، ولی هر تسک فقط یک مسئول دارد.)
-4. **User to ActivityLog**: One-to-Many (هر کاربر می‌تواند فعالیت‌های مختلفی را ثبت کند.)
-5. **Project to ActivityLog**: One-to-Many (هر پروژه می‌تواند دارای چندین فعالیت ثبت‌شده باشد.)
-6. **Task to ActivityLog**: One-to-Many (هر تسک می‌تواند دارای چندین فعالیت مرتبط باشد.)
+### 1. User
+
+- **Properties**:
+  - `id`: User ID
+  - `username`: Username
+  - `email`: Email
+  - `password`: Encrypted password
+  - `role`: Role (Admin, Project Manager, Regular User)
+  - `createdAt`: Date of account creation
+  - `updatedAt`: Last updated date
+
+### 2. Project
+
+- **Properties**:
+  - `id`: Project ID
+  - `name`: Project name
+  - `description`: Project description
+  - `status`: Project status (Active, Inactive, Completed)
+  - `startDate`: Project start date
+  - `endDate`: Project end date
+  - `createdAt`: Date of project creation
+  - `updatedAt`: Last updated date
+  - `ownerId`: ID of the project manager
+
+### 3. Task
+
+- **Properties**:
+  - `id`: Task ID
+  - `title`: Task title
+  - `description`: Task description
+  - `status`: Task status (Backlog, In Progress, Done)
+  - `priority`: Priority level (High, Medium, Low)
+  - `dueDate`: Task due date
+  - `createdAt`: Date of task creation
+  - `updatedAt`: Last updated date
+  - `assignedTo`: ID of the assigned user
+  - `projectId`: ID of the related project
+
+### 4. Activity Log
+
+- **Properties**:
+  - `id`: Activity ID
+  - `userId`: ID of the user who performed the activity
+  - `projectId`: ID of the related project
+  - `taskId`: ID of the related task (if applicable)
+  - `action`: Type of activity (e.g., created, updated, deleted)
+  - `timestamp`: Time of the activity
+
+---
+
+## Relationships
+
+1. **User to Project**: Many-to-Many (A user can belong to multiple projects, and a project can have multiple users.)
+2. **Project to Task**: One-to-Many (A project contains multiple tasks, and each task belongs to one project.)
+3. **User to Task**: One-to-Many (A user can be assigned to multiple tasks, but each task has only one assignee.)
+4. **User to ActivityLog**: One-to-Many (A user can have multiple logged activities.)
+5. **Project to ActivityLog**: One-to-Many (A project can have multiple associated activity logs.)
+6. **Task to ActivityLog**: One-to-Many (A task can have multiple associated activity logs.)
 
 ---
 
-## عملیات مجاز برای هر نقش
+## Allowed Operations by Role
 
-| عملیات                | ادمین               | مدیر پروژه                       | کاربر عادی                           |
-| --------------------- | ------------------- | -------------------------------- | ------------------------------------ |
-| **مدیریت کاربران**    | افزودن، ویرایش، حذف | ندارد                            | ندارد                                |
-| **مدیریت پروژه‌ها**   | ایجاد، ویرایش، حذف  | پروژه‌های خود                    | مشاهده پروژه‌های عضو                 |
-| **مدیریت تسک‌ها**     | ایجاد، ویرایش، حذف  | ایجاد و ویرایش تسک‌های پروژه خود | مشاهده و ویرایش تسک‌های اختصاص یافته |
-| **تاریخچه فعالیت‌ها** | مشاهده و ویرایش     | مشاهده فعالیت‌های پروژه خود      | مشاهده فعالیت‌های تسک خود            |
-
----
-
-## ساختار پایگاه داده و جداول (Database Structure)
-
-1. **جدول Users**: شامل اطلاعات کاربران.
-2. **جدول Projects**: شامل اطلاعات پروژه‌ها.
-3. **جدول Tasks**: شامل اطلاعات تسک‌ها.
-4. **جدول ActivityLogs**: شامل تاریخچه فعالیت‌ها.
-5. **جدول UserProjects**: جدول واسط برای رابطه Many-to-Many بین کاربران و پروژه‌ها.
+| Operation              | Admin                | Project Manager                        | Regular User                 |
+| ---------------------- | -------------------- | -------------------------------------- | ---------------------------- |
+| **Manage Users**       | Add, edit, delete    | None                                   | None                         |
+| **Manage Projects**    | Create, edit, delete | Projects they own                      | View assigned projects       |
+| **Manage Tasks**       | Create, edit, delete | Create and edit tasks in their project | View and edit assigned tasks |
+| **View Activity Logs** | View and edit        | View project activity logs             | View task activity logs      |
 
 ---
 
-## مستندسازی APIها
+## Database Structure
 
-### 1. APIهای کاربران (Users)
-
-- **ایجاد کاربر**: `/api/users` (روش `POST`)
-- **مشاهده لیست کاربران**: `/api/users` (روش `GET`)
-- **ویرایش کاربر**: `/api/users/:id` (روش `PATCH`)
-- **حذف کاربر**: `/api/users/:id` (روش `DELETE`)
-
-### 2. APIهای پروژه‌ها (Projects)
-
-- **ایجاد پروژه**: `/api/projects` (روش `POST`)
-- **مشاهده لیست پروژه‌ها**: `/api/projects` (روش `GET`)
-- **ویرایش پروژه**: `/api/projects/:id` (روش `PATCH`)
-- **حذف پروژه**: `/api/projects/:id` (روش `DELETE`)
-
-### 3. APIهای تسک‌ها (Tasks)
-
-- **ایجاد تسک**: `/api/tasks` (روش `POST`)
-- **مشاهده لیست تسک‌ها**: `/api/tasks` (روش `GET`)
-- **ویرایش تسک**: `/api/tasks/:id` (روش `PATCH`)
-- **حذف تسک**: `/api/tasks/:id` (روش `DELETE`)
-
-### 4. APIهای تاریخچه فعالیت‌ها (ActivityLogs)
-
-- **مشاهده لیست فعالیت‌ها**: `/api/activity-logs` (روش `GET`)
-- **مشاهده فعالیت‌های یک تسک یا پروژه خاص**: `/api/activity-logs?taskId=:taskId&projectId=:projectId` (روش `GET`)
+1. **Users Table**: Stores user information.
+2. **Projects Table**: Stores project information.
+3. **Tasks Table**: Stores task information.
+4. **ActivityLogs Table**: Stores activity history.
+5. **UserProjects Table**: Junction table for the Many-to-Many relationship between users and projects.
 
 ---
+
+# API Routes and Access Permissions
+
+## User Management
+
+- `POST /api/users` - **Admin** - Creates a new user
+- `GET /api/users` - **Admin** - Retrieves a list of all users
+- `GET /api/users/:id` - **Admin, Project Manager** - Gets user information by ID
+- `PATCH /api/users/:id` - **Admin** - Updates user information by ID
+- `DELETE /api/users/:id` - **Admin** - Deletes a user by ID
+- `PATCH /api/users/:id/role` - **Admin** - Changes the role of a user
+
+---
+
+## Project Management
+
+- `POST /api/projects` - **Admin, Project Manager** - Creates a new project
+- `GET /api/projects` - **Admin, Project Manager** - Retrieves a list of all projects
+- `GET /api/projects/:id` - **Admin, Project Manager, Regular User** - Gets project details by ID
+- `PATCH /api/projects/:id` - **Admin, Project Manager** - Updates project information by ID
+- `DELETE /api/projects/:id` - **Admin** - Deletes a project by ID
+- `POST /api/projects/:id/users` - **Admin, Project Manager** - Adds a user to the project
+- `GET /api/projects/:id/users` - **Admin, Project Manager** - Retrieves a list of users in a project
+- `GET /api/projects/:id/tasks` - **Admin, Project Manager, Regular User** - Retrieves tasks in a project
+
+---
+
+## Task Management
+
+- `POST /api/tasks` - **Admin, Project Manager** - Creates a new task
+- `GET /api/tasks` - **Admin, Project Manager** - Retrieves a list of all tasks
+- `GET /api/tasks/:id` - **Admin, Project Manager, Regular User** - Gets task information by ID
+- `PATCH /api/tasks/:id` - **Admin, Project Manager** - Updates task information by ID
+- `DELETE /api/tasks/:id` - **Admin** - Deletes a task by ID
+- `PATCH /api/tasks/:id/assign` - **Admin, Project Manager** - Assigns or changes the assignee of a task
+- `PATCH /api/tasks/:id/status` - **Admin, Project Manager, Regular User** - Updates the status of a task
+
+---
+
+## Activity Log Management
+
+- `GET /api/activity-logs` - **Admin, Project Manager** - Retrieves all activity logs
+- `GET /api/activity-logs?userId=:userId` - **Admin, Project Manager** - Gets activities for a specific user
+- `GET /api/activity-logs?projectId=:projectId` - **Admin, Project Manager** - Gets activities for a specific project
+- `GET /api/activity-logs?taskId=:taskId` - **Admin, Project Manager, Regular User** - Gets activities for a specific task
+
+---
+
+## Authentication
+
+- `POST /api/auth/register` - **All Users** - Registers a new user
+- `POST /api/auth/login` - **All Users** - User login and receives JWT token
+- `GET /api/auth/profile` - **All Users** - Views logged-in user's profile
+- `POST /api/auth/logout` - **All Users** - Logs out and revokes token
+
+---
+
+## Reporting
+
+- `GET /api/reports/projects` - **Admin, Project Manager** - Generates a report on projects
+- `GET /api/reports/tasks` - **Admin, Project Manager** - Generates a report on tasks
+- `GET /api/reports/users` - **Admin** - Generates a report on users
