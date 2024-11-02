@@ -15,4 +15,9 @@ export class UtilService{
         return compare(password,hash);
     }
 
+
+    dayToMilisecond(day:number){
+        return day*24*60*60*1000 + Date.now();
+    }
+
 }
