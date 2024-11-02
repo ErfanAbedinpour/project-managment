@@ -7,4 +7,6 @@ export class LoginResponseDTO{
     user:UserDTO
     @Expose()
     accessToken:string
+    @Expose()
+    refreshToken:string;
 }
