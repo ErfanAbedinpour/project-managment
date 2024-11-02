@@ -64,7 +64,8 @@ export class LoginUserDTO{
 }
 
 
-export class TokenPaylaod{
+
+export class AccessTokenPyload{
   @IsNotEmpty()
   @IsNumber()
   id:number
@@ -79,4 +80,11 @@ export class TokenPaylaod{
   @IsString()
   @IsNotEmpty()
   display_name:string
+
+}
+
+export class RefreshTokenPayload{
+  iat:number;
+  exp:number;
+  user:number;
 }
