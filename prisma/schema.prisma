@@ -14,19 +14,21 @@ datasource db {
 }
 
 model User {
-  id           Int            @id @default(autoincrement())
-  email        String         @unique
-  username     String         @unique @db.VarChar(80)
-  display_name String         @db.VarChar(50)
-  password     String         @db.VarChar(200)
-  role         Role           @default(USER)
-  profile      String?        @default("default") @db.VarChar(200)
-  Project      Project[]
-  Task         Task[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  UserProjects UserProjects[]
-  Activity     Activity[]
+  id                 Int                  @id @default(autoincrement())
+  email              String               @unique
+  username           String               @unique @db.VarChar(80)
+  display_name       String               @db.VarChar(50)
+  password           String               @db.VarChar(200)
+  role               Role                 @default(USER)
+  profile            String?              @default("default") @db.VarChar(200)
+  Project            Project[]
+  Task               Task[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  UserProjects       UserProjects[]
+  Activity           Activity[]
+  UserToken          UserToken[]
+  ResetPasswordToken ResetPasswordToken[]
 }
 
 model Project {
@@ -80,6 +82,36 @@ model Activity {
   taskId    Int
   action    String   @db.VarChar(100)
   date      DateTime @default(now())
+}
+
+model UserToken {
+  int Int @id() @default(autoincrement())
+
+  token String @unique @db.VarChar(300)
+
+  user User @relation(fields: [userId], references: [id])
+
+  userId Int
+
+  createdAt DateTime @default(now())
+
+  expireAt DateTime
+
+  isRevoke Boolean @default(false)
+}
+
+model ResetPasswordToken {
+  id Int @id() @default(autoincrement())
+
+  token String @db.Uuid()
+
+  user User @relation(fields: [userId], references: [id])
+
+  userId Int
+
+  createdAt DateTime @default(now())
+
+  expireAt DateTime
 }
 
 enum Priority {
