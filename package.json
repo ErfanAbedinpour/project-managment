@@ -17,8 +17,9 @@
     "test:cov": "cross-env NODE_ENV=test jest --coverage",
     "test:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json",
-    "migrate:dev": "dotenv -e .env.dev npx prisma migrate dev",
-    "migrate:test": "dotenv -e .env.test npx prisma migrate dev"
+    "migrate:dev": "dotenv -e .env.dev prisma migrate dev",
+    "migrate:test": "dotenv -e .env.test prisma migrate dev",
+    "seed": "prisma db seed"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -72,5 +73,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
