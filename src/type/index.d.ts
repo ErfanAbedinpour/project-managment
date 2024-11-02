@@ -12,6 +12,8 @@ export interface IEnvironmentVariables {
   ADMIN_USERNAME: string;
   ADMIN_EMAIL: string;
   ADMIN_PASSWORD: string;
+  REFRESH_TOKEN_EXPIRE:string;
+  ACCESS_TOKEN_EXPIRE:string
 }
 
 export {};
