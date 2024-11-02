@@ -6,6 +6,7 @@ import { ProjectService } from './project.service';
 @Module({
   controllers: [ProjectController],
   imports: [UserModule],
+  providers: [ProjectService],
   exports: [ProjectService],
 })
 export class ProjectModule {}
