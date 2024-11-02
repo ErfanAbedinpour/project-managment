@@ -103,5 +103,5 @@ enum ProjectStatus {
 enum Role {
   ADMIN
   USER
-  OWNER
+  PROJECT_MANGER
 }
