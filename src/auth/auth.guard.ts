@@ -5,17 +5,13 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JsonWebTokenError, JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { TokenPaylaod } from './dtos/auth.dto';
 
 @Injectable()
 export class IsAuth implements CanActivate {
   constructor(
-    private readonly jwt: JwtService,
-    private readonly env: ConfigService,
   ) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
 
@@ -28,10 +24,9 @@ export class IsAuth implements CanActivate {
       );
 
     try {
-      const payload: TokenPaylaod = await this.jwt.verifyAsync(jwtToken, {
-        secret: this.env.getOrThrow('SECRET'),
-      });
-      request.user = payload;
+      // const payload: AccessTokenPyload= await this.accessTokenJwt.verifyAsync(jwtToken);
+
+      request.user = {};
       return true;
     } catch (err) {
       throw new ForbiddenException('token is expired. ');

@@ -1,10 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { AccessTokenPyload, CreateUserDTO, LoginUserDTO, RefreshTokenPayload } from "./dtos/auth.dto";
-import { JwtService } from '@nestjs/jwt'
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import {  CreateUserDTO, LoginUserDTO} from "./dtos/auth.dto";
 import { UserServices } from "../user/user.service";
 import { UtilService } from "../util/util.service";
-import { PrismaService } from "../prisma/prisma.service";
-import { User } from "@prisma/client";
+import { TokenService } from "../token/token.service";
 
 
 @Injectable()
@@ -12,8 +10,7 @@ export class AuthService {
     constructor(
         private readonly userService: UserServices,
         private readonly util: UtilService,
-        private readonly jwt: JwtService,
-        private readonly prisma: PrismaService
+        private readonly tokenService:TokenService
     ) { }
 
     async register(user: CreateUserDTO):Promise<{success:boolean}> {
@@ -40,64 +37,25 @@ export class AuthService {
         }
     }
 
-    async login({ identify, password }: LoginUserDTO):Promise<{user:User,accessToken:string;refreshToken:string}> {
+    async login({ identify, password }: LoginUserDTO):Promise<{accessToken:string;refreshToken:string}> {
         try {
             const user = await this.userService.user({ OR: [{ email: identify }, { username: identify }] });
+
             if (!user)
                 throw new NotFoundException("user does not found")
+
 
             if (!(await this.util.verify(password, user.password)))
                 throw new BadRequestException("identify or password are incorrect")
 
-            //accessToken payload
-            const accessTokenPayLoad: AccessTokenPyload = {
-                username: user.username,
-                email: user.email,
-                role: user.role,
-                id: user.id,
-                display_name: user.display_name
-            }
-
-            //refreshToken payload
-            const refreshTokenPayload: RefreshTokenPayload = {
-                user: user.id,
-                exp: this.util.dayToMilisecond(7),
-                iat: Date.now()
-            }
-            const {accessToken,refreshToken} =await   this.generateAuthToken(accessTokenPayLoad,refreshTokenPayload);
-            
+            // generate tokens
+            const {accessToken,refreshToken} =await this.tokenService.createToken(user);
 
             return {
-                user,
-                accessToken: accessToken,
-                refreshToken: refreshToken
+                accessToken,
+                refreshToken
             }
         } catch (err) {
-            throw err;
-        }
-    }
-
-
-    private async generateAuthToken(accessTokenPayload: AccessTokenPyload, refreshTokenPayload: RefreshTokenPayload)
-    :Promise<{accessToken:string;refreshToken:string }> {
-        try {
-            const accessToken = await this.jwt.signAsync(accessTokenPayload, {
-                expiresIn: "1h"
-            })
-            const refreshToken = await this.jwt.signAsync(refreshTokenPayload, {
-                expiresIn: "7day"
-            })
-
-            await this.prisma.userToken.create({
-                data: {
-                    token: refreshToken,
-                    userId: refreshTokenPayload.user,
-                    expireAt: new Date(refreshTokenPayload.exp),
-                }
-            })
-
-            return {accessToken,refreshToken}
-        }catch(err){
             throw err;
         }
     }

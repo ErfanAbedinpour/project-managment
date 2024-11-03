@@ -63,28 +63,3 @@ export class LoginUserDTO{
     password:string;
 }
 
-
-
-export class AccessTokenPyload{
-  @IsNotEmpty()
-  @IsNumber()
-  id:number
-  @IsNotEmpty()
-  @IsString()
-  username:string;
-  @IsNotEmpty()
-  @IsString()
-  role:string;
-  @IsEmail()
-  email:string;
-  @IsString()
-  @IsNotEmpty()
-  display_name:string
-
-}
-
-export class RefreshTokenPayload{
-  iat:number;
-  exp:number;
-  user:number;
-}
