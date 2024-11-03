@@ -1,11 +1,11 @@
-import { Inject, Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
+import {  Injectable, InternalServerErrorException, UnauthorizedException, } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { User } from "@prisma/client";
-import { AccessTokenPyload, RefreshTokenPayload } from "./dtos/token.dto";
-import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { IEnvironmentVariables } from "../type";
 import { UtilService } from "../util/util.service";
+import { AccessTokenPyload, RefreshTokenPayload } from "./dtos/token.dto";
+import { User } from "@prisma/client";
+import { JwtCustomeService } from "./jwt.service";
 
 
 
@@ -13,13 +13,12 @@ import { UtilService } from "../util/util.service";
 export class TokenService {
     constructor(
         private readonly prisma: PrismaService,
-        @Inject("ACCESS_TOKEN_JWT") private readonly accessTokenJwt: JwtService,
-        @Inject("REFRESH_TOKEN_JWT") private readonly refreshTokenJwt: JwtService,
+        private readonly jwt:JwtCustomeService,
         private readonly env: ConfigService<IEnvironmentVariables>,
         private readonly util: UtilService
-
     ) { }
 
+    
     private async generateTokens(user: Pick<User, "id" | "role" | "username">): Promise<{ accessToken: string; refreshToken: string; }> {
         const accessTokenpayload: AccessTokenPyload = {
             id: user.id,
@@ -27,13 +26,13 @@ export class TokenService {
             username: user.username
         }
         try {
-            const accessToken = await this.accessTokenJwt.signAsync(accessTokenpayload)
+            const accessToken = await this.jwt.signAccessToken(accessTokenpayload);
 
             const refreshTokenPayload: RefreshTokenPayload = {
                 user: user.id
             }
 
-            const refreshToken = await this.accessTokenJwt.signAsync(refreshTokenPayload)
+            const refreshToken = await this.jwt.signRefreshToken(refreshTokenPayload)
 
             return { accessToken, refreshToken }
 
@@ -85,10 +84,7 @@ export class TokenService {
                 throw new UnauthorizedException("token is invaid!.");
 
 
-
-            await this.refreshTokenJwt.verifyAsync(refreshToken, {
-                secret: this.env.getOrThrow("JWT_SECRET")
-            });
+            await this.jwt.verifyRefreshToken(refreshToken);
 
 
             const { accessToken, refreshToken: newRefreshToken } = await this.generateTokens(token.user)
@@ -111,6 +107,7 @@ export class TokenService {
             }
 
         } catch (err) {
+            console.log(err)
             throw new UnauthorizedException("token is expired. please login again. ")
         }
     }

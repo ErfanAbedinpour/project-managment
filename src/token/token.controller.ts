@@ -1,13 +1,15 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, UseGuards } from "@nestjs/common";
 import { TokenService } from "./token.service";
 import { RefreshTokenBodyDTO } from "./dtos/token.dto";
+import { IsAuth } from "../auth/auth.guard";
 
 
 @Controller()
 export class TokneController{
     constructor(private readonly tokenService:TokenService){}
 
-    @Post()
+    @Post("/refresh")
+    // @UseGuards(IsAuth)
     refresh(@Body() body:RefreshTokenBodyDTO){
         return this.tokenService.refresh(body.refreshToken)
     }

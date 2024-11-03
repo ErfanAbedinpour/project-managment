@@ -1,42 +1,29 @@
-import { Module } from "@nestjs/common";
+import {  Module } from "@nestjs/common";
 import { TokenService } from "./token.service";
-import { PrismaService } from "../prisma/prisma.service";
 import { UtilModule } from "../util/util.module";
-import { JwtModule, JwtService } from "@nestjs/jwt";
-import { ConfigService } from "@nestjs/config";
-import { IEnvironmentVariables } from "../type";
+import { JwtModule,} from "@nestjs/jwt";
+import { TokneController } from "./token.controller";
+import { PrismaModule } from "../prisma/prisma.module";
+import { JwtCustomeService } from "./jwt.service";
+
+
 
 @Module({
-    imports:[PrismaService,UtilModule,JwtModule.register({})],
+    imports:[
+        PrismaModule,
+        UtilModule,
+        JwtModule.register({})
+    ],
+
     exports:[
         TokenService,
-        {
-            provide:"ACCESS_JWT_SERVICE",
-            useFactory(config:ConfigService<IEnvironmentVariables>) { 
-                return new JwtService({
-                    secret:config.getOrThrow<string>('ACCESS_TOKEN_SECRET'),
-                    global:true,
-                    signOptions:{
-                        expiresIn:`${config.getOrThrow<string>("ACCESS_TOKEN_EXPIRE")} h`
-                    }
-                })
-            },
-            inject:[ConfigService]
-        },
-        {
-            provide:"REFRESH_JWT_SERVICE",
-            useFactory(config:ConfigService<IEnvironmentVariables>) { 
-                return new JwtService({
-                    secret:config.getOrThrow<string>("REFRESH_TOKEN_SECRET"),
-                    global:true,
-                    signOptions:{
-                        expiresIn:`${config.getOrThrow<string>("REFRESH_TOKEN_EXPIRE")} h`
-                    }
-                })
-            },
-        }
-
+        JwtCustomeService
     ],
-    providers:[TokenService]
+
+    providers:[
+        TokenService,
+        JwtCustomeService 
+    ],
+    controllers:[TokneController]
 })
 export class TokenModule{}
