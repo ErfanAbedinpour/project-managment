@@ -81,10 +81,7 @@ export class TokenService {
             );
 
             if (!token || token.expireAt.getTime() < Date.now())
-                throw new UnauthorizedException("token is invaid!.");
-
-
-            await this.jwt.verifyRefreshToken(refreshToken);
+                throw new UnauthorizedException("token is expired. please login again");
 
 
             const { accessToken, refreshToken: newRefreshToken } = await this.generateTokens(token.user)
@@ -107,8 +104,7 @@ export class TokenService {
             }
 
         } catch (err) {
-            console.log(err)
-            throw new UnauthorizedException("token is expired. please login again. ")
+            throw err
         }
     }
 }
