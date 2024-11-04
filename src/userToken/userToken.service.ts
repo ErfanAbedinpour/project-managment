@@ -4,7 +4,6 @@ import { ConfigService } from "@nestjs/config";
 import { IEnvironmentVariables } from "../type";
 import { UtilService } from "../util/util.service";
 import { Prisma,  UserToken } from "@prisma/client";
-import { JwtCustomeService } from "./jwt.service";
 
 
 
@@ -12,7 +11,6 @@ import { JwtCustomeService } from "./jwt.service";
 export class UserTokenService {
     constructor(
         private readonly prisma: PrismaService,
-        private readonly jwt:JwtCustomeService,
         private readonly env: ConfigService<IEnvironmentVariables>,
         private readonly util: UtilService
     ) { }
@@ -34,8 +32,13 @@ export class UserTokenService {
     });
   }
 
-  create(token: Prisma.UserTokenCreateInput):Promise<UserToken> {
-    return this.prisma.userToken.create({ data: token});
+  create(data: {token:string;userId:number}):Promise<UserToken> {
+    const expireTime = this.util.dayToMilisecond(+this.env.getOrThrow("REFRESH_TOKEN_EXPIRE"))
+    return this.prisma.userToken.create({ data: {
+      token:data.token,
+      userId:data.userId,
+      expireAt:new Date(expireTime)
+    }});
   }
 
 
@@ -55,5 +58,4 @@ export class UserTokenService {
       where,
     });
   }
-
 }
