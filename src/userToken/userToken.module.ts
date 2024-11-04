@@ -24,4 +24,4 @@ import { JwtModule } from "@nestjs/jwt";
         JwtCustomeService
     ],
 })
-export class TokenModule{}
+export class UserTokenModule{}
