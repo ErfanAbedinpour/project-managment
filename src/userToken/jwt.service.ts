@@ -14,7 +14,7 @@ export class JwtCustomeService{
     constructor(private  readonly config:ConfigService<IEnvironmentVariables>) {
         this.accessTokenJwt = new JwtService({
             secret:this.config.getOrThrow<string>("ACCESS_TOKEN_SECRET"),
-            signOptions:{expiresIn:this.config.getOrThrow<string>("ACCESS_TOKEN_EXPIRE")+'h'}
+            signOptions:{expiresIn:this.config.getOrThrow<string>("ACCESS_TOKEN_EXPIRE")+'m'}
         })
 
 
