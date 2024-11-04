@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtCustomeService } from "./jwt.service";
+import { JsonWebTokenError } from "@nestjs/jwt";
 
 
 @Injectable()
@@ -9,12 +10,13 @@ export class TokenGuard implements CanActivate{
         const req = context.switchToHttp().getRequest();
         const {refreshToken}= req.body;
         try{
-            const payload = await this.jwt.verifyAccessToken(refreshToken);
-            console.log('Payload is ',payload)
+            const payload = await this.jwt.verifyRefreshToken(refreshToken);
             return !!payload
         }catch(err){
-            console.error("gurad " ,err)
-            throw new UnauthorizedException("token is invalid. please login again.")
+            if(err instanceof JsonWebTokenError)
+                throw new UnauthorizedException("token is invalid. please login again.")
+            console.error(err)
+            throw err;
         }
     }
 }
