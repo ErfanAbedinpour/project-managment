@@ -1,5 +1,5 @@
 import {  Body,  Controller, ForbiddenException, Post, Res, UseGuards,} from "@nestjs/common";
-import { CreateUserDTO, LoginUserDTO, logOutDTO,} from "./dtos/auth.dto";
+import { CreateUserDTO, LoginUserDTO,  TokenDTO,} from "./dtos/auth.dto";
 import { AuthService } from "./auth.service";
 import { LoginResponseDTO } from "./dtos/auth.response.dto";
 import { ResponseSerializer } from "../interceptor/response.interceptor";
@@ -39,7 +39,7 @@ export class AuthController{
 
     @Post('logout')
     @UseGuards(TokenGuard)
-    async logout(@Body() body:logOutDTO,@Res({passthrough:true}) res:Response){
+    async logout(@Body() body:TokenDTO,@Res({passthrough:true}) res:Response){
         try{
             const result = await this.authService.logOut(body.refreshToken);
             if(!result.success)
@@ -49,6 +49,31 @@ export class AuthController{
             return result
         }catch(err){
             throw err;
+        }
+    }
+
+    @Post('token')
+    @UseGuards(TokenGuard)
+    async refreshToken(@Body() body:TokenDTO,@Res({passthrough:true}) res:Response){
+
+        try{
+        const {accessToken,refreshToken} = await this.authService.refreshToken(body.refreshToken)
+
+        res.cookie('accessToken',accessToken,{
+                httpOnly:true,
+                expires:new Date(Date.now()+7*24*60*60+1000),
+        })
+        res.cookie('refreshToken',refreshToken,{
+                httpOnly:true,
+                expires:new Date(Date.now()+7*24*60*60+1000),
+        })
+
+        return {
+            accessToken,
+            refreshToken
+        }
+        }catch(err){
+            throw err
         }
     }
 }

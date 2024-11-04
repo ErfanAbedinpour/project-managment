@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException, } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException, } from "@nestjs/common";
 import {  CreateUserDTO, LoginUserDTO} from "./dtos/auth.dto";
 import { UserServices } from "../user/user.service";
 import { UtilService } from "../util/util.service";
@@ -80,10 +80,36 @@ export class AuthService {
             await this.userTokenService.deleteToken({token:refreshToken});
             return {success:true}
         }catch(err){
-            if(err instanceof JsonWebTokenError){
-                throw new ForbiddenException("token is invalid. ")
-            }
-            console.error(err)
+            console.error('error during logOut ', err)
         }
+    }
+
+    async refreshToken(refreshToken:string):Promise<{accessToken:string;refreshToken:string}>{
+        try{
+            console.log(' i am here')
+            const userToken = await this.userTokenService.getUserByToken(refreshToken);
+            if(!userToken || userToken.expireAt.getTime() < Date.now() ) 
+                throw new UnauthorizedException("token is expired or invaid .please login again. ")
+            
+            
+            const newAccessToken = await this.jwtService.signAccessToken({
+                id:userToken.user.id,
+                role:userToken.user.role,
+                username:userToken.user.username
+            })
+
+            const newRefreshToken = await this.jwtService.signRefreshToken({
+                id:userToken.user.id
+            })
+
+            await this.userTokenService.updateToken({where:{token:refreshToken},data:{token:newRefreshToken}});
+
+
+            return {accessToken:newAccessToken,refreshToken:newRefreshToken}
+        }catch(err){
+            console.error('error during generate new accessToken ')
+            throw err;
+        }
+
     }
 }
