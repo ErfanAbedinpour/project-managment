@@ -4,7 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { join } from 'path';
-import { TokenModule } from './token/token.module';
+import { UserTokenModule} from './userToken/userToken.module';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { TokenModule } from './token/token.module';
     AuthModule,
     PrismaModule,
     UserModule,
-    TokenModule
+    UserTokenModule 
   ],
 })
 export class AppModule {}
