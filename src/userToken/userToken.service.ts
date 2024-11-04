@@ -3,7 +3,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { ConfigService } from "@nestjs/config";
 import { IEnvironmentVariables } from "../type";
 import { UtilService } from "../util/util.service";
-import { Prisma,  UserToken } from "@prisma/client";
+import { Prisma,  User,  UserToken } from "@prisma/client";
 
 
 
@@ -17,16 +17,16 @@ export class UserTokenService {
 
 
     async getUserByToken(token:string,
-  ): Promise<UserToken| null> {
+  ): Promise<Prisma.UserTokenGetPayload<{include:{user:{select:{username:true,role:true,id:true}}}}>| null> {
     return this.prisma.userToken.findFirst({
-      where: {token},
+      where: {token,isRevoke:false},
       include:{
         user:{
-            select:{
-                username:true,
-                role:true,
-                id:true
-            }
+          select:{
+            username:true,
+            role:true,
+            id:true
+          }
         }
       }
     });
