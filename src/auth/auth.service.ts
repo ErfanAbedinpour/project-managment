@@ -1,10 +1,9 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException, } from "@nestjs/common";
+import { BadRequestException,  Injectable, NotFoundException, UnauthorizedException, } from "@nestjs/common";
 import {  CreateUserDTO, LoginUserDTO} from "./dtos/auth.dto";
 import { UserServices } from "../user/user.service";
 import { UtilService } from "../util/util.service";
 import { UserTokenService } from "../userToken/userToken.service";
 import { JwtCustomeService } from "../userToken/jwt.service";
-import { JsonWebTokenError } from "@nestjs/jwt";
 
 
 @Injectable()
@@ -14,7 +13,6 @@ export class AuthService {
         private readonly util: UtilService,
         private readonly userTokenService:UserTokenService,
         private readonly jwtService:JwtCustomeService
-
     ) { }
 
     async register(user: CreateUserDTO):Promise<{success:boolean}> {
@@ -86,8 +84,8 @@ export class AuthService {
 
     async refreshToken(refreshToken:string):Promise<{accessToken:string;refreshToken:string}>{
         try{
-            console.log(' i am here')
             const userToken = await this.userTokenService.getUserByToken(refreshToken);
+
             if(!userToken || userToken.expireAt.getTime() < Date.now() ) 
                 throw new UnauthorizedException("token is expired or invaid .please login again. ")
             
@@ -107,7 +105,6 @@ export class AuthService {
 
             return {accessToken:newAccessToken,refreshToken:newRefreshToken}
         }catch(err){
-            console.error('error during generate new accessToken ')
             throw err;
         }
 
