@@ -15,6 +15,7 @@ export class TokenGuard implements CanActivate{
             await this.jwt.verifyRefreshToken(refreshToken);
             //is refreshToken store in DB
             const isTokenValid = await this.userTokenService.getUserByToken(refreshToken);
+            console.log(isTokenValid)
             return !!isTokenValid
         }catch(err){
             if(err instanceof JsonWebTokenError)
