@@ -6,10 +6,15 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { JwtCustomeService } from '../userToken/jwt.service';
+import { AccessTokenPyload } from '../userToken/dtos/token.dto';
+import { plainToInstance } from 'class-transformer';
+import { validateOrReject } from 'class-validator';
 
 @Injectable()
 export class IsAuth implements CanActivate {
   constructor(
+    private readonly jwtService:JwtCustomeService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -24,12 +29,14 @@ export class IsAuth implements CanActivate {
       );
 
     try {
-      // const payload: AccessTokenPyload= await this.accessTokenJwt.verifyAsync(jwtToken);
+      const payload:unknown= await this.jwtService.verifyAccessToken(jwtToken);
+      const user = plainToInstance(AccessTokenPyload,payload)
+      await validateOrReject(user)
 
-      request.user = {};
+      request.user = user;
       return true;
     } catch (err) {
-      throw new ForbiddenException('token is expired. ');
+      throw new ForbiddenException('token is invalid or expired. please get new. ');
     }
   }
 }

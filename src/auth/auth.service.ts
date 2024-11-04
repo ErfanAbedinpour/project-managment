@@ -1,8 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, } from "@nestjs/common";
 import {  CreateUserDTO, LoginUserDTO} from "./dtos/auth.dto";
 import { UserServices } from "../user/user.service";
 import { UtilService } from "../util/util.service";
-import { TokenService } from "../token/token.service";
+import { UserTokenService } from "../userToken/userToken.service";
+import { JwtCustomeService } from "../userToken/jwt.service";
+import { JsonWebTokenError } from "@nestjs/jwt";
 
 
 @Injectable()
@@ -10,7 +12,9 @@ export class AuthService {
     constructor(
         private readonly userService: UserServices,
         private readonly util: UtilService,
-        private readonly tokenService:TokenService
+        private readonly userTokenService:UserTokenService,
+        private readonly jwtService:JwtCustomeService
+
     ) { }
 
     async register(user: CreateUserDTO):Promise<{success:boolean}> {
@@ -49,7 +53,17 @@ export class AuthService {
                 throw new BadRequestException("identify or password are incorrect")
 
             // generate tokens
-            const {accessToken,refreshToken} =await this.tokenService.createToken(user);
+            const accessToken =await  this.jwtService.signAccessToken({
+                username:user.username,
+                role:user.role,
+                id:user.id
+            })
+            
+            const refreshToken = await this.jwtService.signRefreshToken({
+                id:user.id
+            })
+            
+            await this.userTokenService.create({token:refreshToken,userId:user.id});
 
             return {
                 accessToken,
@@ -60,4 +74,16 @@ export class AuthService {
         }
     }
 
+
+    async logOut(refreshToken:string):Promise<{success:boolean}>{
+        try{
+            await this.userTokenService.deleteToken({token:refreshToken});
+            return {success:true}
+        }catch(err){
+            if(err instanceof JsonWebTokenError){
+                throw new ForbiddenException("token is invalid. ")
+            }
+            console.error(err)
+        }
+    }
 }
