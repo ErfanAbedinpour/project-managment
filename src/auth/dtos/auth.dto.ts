@@ -63,3 +63,9 @@ export class LoginUserDTO{
     password:string;
 }
 
+
+export class logOutDTO{
+  @IsString()
+  @IsNotEmpty()
+  refreshToken:string
+}
