@@ -5,6 +5,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { join } from 'path';
 import { UserTokenModule} from './userToken/userToken.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -16,7 +17,10 @@ import { UserTokenModule} from './userToken/userToken.module';
     AuthModule,
     PrismaModule,
     UserModule,
-    UserTokenModule 
+    UserTokenModule ,
+    CacheModule.register({
+      isGlobal:true,
+    })
   ],
 })
 export class AppModule {}
