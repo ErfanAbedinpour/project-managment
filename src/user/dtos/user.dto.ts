@@ -1,4 +1,21 @@
-import { IsEmail, IsOptional, IsString, Max, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsOptional, IsString,  MaxLength, MinLength, Validate, ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
+
+
+
+
+@ValidatorConstraint({name:"AtOneLeastRequired",async:false})
+class AtOneLeastRequired implements ValidatorConstraintInterface{
+    validate(_: unknown, validationArguments?: ValidationArguments): Promise<boolean> | boolean {
+
+        const myDto = validationArguments.object as UserUpdatedBodyDTO;
+
+        return !!(myDto.username || myDto.email|| myDto.display_name)
+    }
+    defaultMessage(validationArguments?: ValidationArguments): string {
+        return "At least one field must be filled"
+    }
+}
+
 
 export class UserUpdatedBodyDTO{
     @IsOptional()
@@ -16,4 +33,7 @@ export class UserUpdatedBodyDTO{
     @IsOptional()
     @IsEmail()
     email:string
+
+    @Validate(AtOneLeastRequired)
+    atLeastOneField?: string; 
 }
