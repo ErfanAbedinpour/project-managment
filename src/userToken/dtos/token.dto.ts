@@ -22,3 +22,8 @@ export class RefreshTokenBodyDTO{
     @IsNotEmpty()
     refreshToken:string;
 }
+
+export class UserTokenParam{
+    accessToken:string;
+    refreshToken:string;
+}
