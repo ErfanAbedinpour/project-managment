@@ -199,6 +199,9 @@ This project management system helps teams and users manage tasks and projects e
 - `DELETE /api/projects/:id` - **Admin** - Deletes a project by ID
 - `POST /api/projects/:id/users` - **Admin, Project Manager** - Adds a user to the project
 - `GET /api/projects/:id/users` - **Admin, Project Manager** - Retrieves a list of users in a project
+
+- `GET /api/user/me` - **All Users** - Views logged-in user's profile
+
 - `GET /api/projects/:id/tasks` - **Admin, Project Manager, Regular User** - Retrieves tasks in a project
 
 ---
@@ -228,7 +231,6 @@ This project management system helps teams and users manage tasks and projects e
 
 - `POST /api/auth/register` - **All Users** - Registers a new user
 - `POST /api/auth/login` - **All Users** - User login and receives JWT token
-- `GET /api/auth/profile` - **All Users** - Views logged-in user's profile
 - `POST /api/auth/logout` - **All Users** - Logs out and revokes token
 
 ---
