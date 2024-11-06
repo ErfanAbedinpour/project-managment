@@ -7,7 +7,7 @@ import { UserTokenModule } from "../userToken/userToken.module";
 
 
 @Module({
-    imports:[PrismaModule,UserTokenModule],
+    imports:[PrismaModule,UserTokenModule,UserTokenModule],
     exports:[UserServices],
     controllers:[UserController],
     providers:[UserServices]
