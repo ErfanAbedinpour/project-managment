@@ -20,6 +20,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     UserTokenModule ,
     CacheModule.register({
       isGlobal:true,
+      ttl:30*60*1000
     })
   ],
 })
