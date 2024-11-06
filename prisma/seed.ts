@@ -24,6 +24,7 @@ async function seed() {
     email: process.env.ADMIN_EMAIL,
     display_name: 'admin',
     password: hashPass,
+    role:"ADMIN"
   };
 
   await prisma.user.create({ data: user });
