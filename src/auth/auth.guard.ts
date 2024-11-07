@@ -2,6 +2,8 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  HttpException,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -9,34 +11,40 @@ import { Request } from 'express';
 import { JwtCustomeService } from '../userToken/jwt.service';
 import { AccessTokenPyload } from '../userToken/dtos/token.dto';
 import { plainToInstance } from 'class-transformer';
-import { validateOrReject } from 'class-validator';
+import {  validateOrReject } from 'class-validator';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class IsAuth implements CanActivate {
   constructor(
-    private readonly jwtService:JwtCustomeService
+    private readonly jwtService:JwtCustomeService,
+    @Inject(CACHE_MANAGER) private readonly cache:Cache
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
 
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    const jwtToken = type === 'Bearer' ? token : null;
+    const {accessToken,refreshToken} = request.cookies;
 
-    if (!jwtToken)
-      throw new UnauthorizedException(
-        'header is empty. or is not valid please etner Bearrer ',
-      );
-
+    if (!accessToken || !refreshToken)
+      throw new UnauthorizedException('you cannot access to this router please login first. ');
+    
     try {
-      const payload:unknown= await this.jwtService.verifyAccessToken(jwtToken);
+      // check token is in balckList
+      const isInBlackList = await this.cache.get<string>(btoa(accessToken)) ;
+      if(isInBlackList)
+        throw new Error();
+      const payload:unknown = await this.jwtService.verifyAccessToken(accessToken);
       const user = plainToInstance(AccessTokenPyload,payload)
       await validateOrReject(user)
 
       request.user = user;
       return true;
     } catch (err) {
-      throw new ForbiddenException('token is invalid or expired. please get new. ');
+      if(err instanceof HttpException)
+        throw err;
+      throw new UnauthorizedException('token is invalid or expired. please get new. ');
     }
   }
 }
