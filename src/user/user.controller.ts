@@ -1,4 +1,4 @@
-import { BadRequestException, Body,  Controller,  Get, Inject,  Patch, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body,  Controller,  Delete,  Get, Inject,  Patch, Post, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import {Response} from 'express';
 import { CurentUser } from "./user.decorator";
 import { AccessTokenPyload, UserTokenParam } from "../userToken/dtos/token.dto";
@@ -8,11 +8,9 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { IsAuth } from "../auth/auth.guard";
 import { ResponseSerializer } from "../interceptor/response.interceptor";
 import { UserTokenService } from "../userToken/userToken.service";
-
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { UserTokens } from "../userToken/userTokens.decorator";
-
 
 @Controller('/user')
 @UseGuards(IsAuth)
@@ -20,7 +18,7 @@ export class UserController{
     constructor( 
       private readonly userService:UserServices,
       private readonly userToken:UserTokenService,
-      @Inject(CACHE_MANAGER) private readonly cache:Cache
+      @Inject(CACHE_MANAGER) private readonly cache:Cache,
     ){
     }
 
@@ -63,4 +61,18 @@ export class UserController{
         throw err;
       }
     }
+
+    @Delete()
+    deleteUser(@CurentUser() me:AccessTokenPyload,@UserTokens() tokens:UserTokenParam){
+      /** 
+       * TODO: validate User
+       * TODO: send verified  code for user email
+       * TODO: if confirm code remove User
+      */
+     return this.userService.deleteAccount(me.id); 
+    }
+
+    @Post("verify")
+    verifyCode(){}
+
 }
