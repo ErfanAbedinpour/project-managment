@@ -1,15 +1,22 @@
-import {  Body,  Controller, ForbiddenException, Post, Res, UseGuards,} from "@nestjs/common";
+import {  Body,  Controller, ForbiddenException, Inject, Post, Req, Res, UseGuards,} from "@nestjs/common";
 import { CreateUserDTO, LoginUserDTO,  TokenDTO,} from "./dtos/auth.dto";
 import { AuthService } from "./auth.service";
 import { LoginResponseDTO } from "./dtos/auth.response.dto";
 import { ResponseSerializer } from "../interceptor/response.interceptor";
-import { Response } from "express";
+import {  Response } from "express";
 import { TokenGuard } from "../userToken/token.guard";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
+import { UserTokens } from "../userToken/userTokens.decorator";
+import { UserTokenParam } from "../userToken/dtos/token.dto";
 
 
 @Controller('auth')
 export class AuthController{
-    constructor(private readonly authService:AuthService){}
+    constructor(
+        private readonly authService:AuthService,
+        @Inject(CACHE_MANAGER) private readonly cache:Cache
+    ){}
     @Post("singup")
     register(@Body() body:CreateUserDTO){
         return this.authService.register(body)
@@ -39,11 +46,17 @@ export class AuthController{
 
     @Post('logout')
     @UseGuards(TokenGuard)
-    async logout(@Body() body:TokenDTO,@Res({passthrough:true}) res:Response){
+    async logout(@Res({passthrough:true}) res:Response,@UserTokens() userTokens:UserTokenParam){
         try{
-            const result = await this.authService.logOut(body.refreshToken);
+            const result = await this.authService.logOut(userTokens.refreshToken);
             if(!result.success)
                 throw new ForbiddenException("unknown error. ");
+
+            const {accessToken} = userTokens;
+            if(accessToken)
+                // set accessToken into BlackList
+                await this.cache.set(btoa(accessToken),accessToken);
+
             res.clearCookie("accessToken");
             res.clearCookie("refreshToken");
             return result
