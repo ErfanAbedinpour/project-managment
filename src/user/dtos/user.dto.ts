@@ -1,3 +1,4 @@
+import { Exclude, Expose } from "class-transformer";
 import { IsEmail, IsOptional, IsString,  MaxLength, MinLength, Validate, ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 
 
@@ -36,4 +37,20 @@ export class UserUpdatedBodyDTO{
 
     @Validate(AtOneLeastRequired)
     atLeastOneField?: string; 
+}
+
+
+export class UserResponseDTO{
+    @Expose()
+    display_name:string
+    @Exclude()
+    password:string
+    @Expose()
+    email:string
+    @Expose()
+    id:number;
+    @Expose()
+    role:string
+    @Exclude()
+    username:string
 }
