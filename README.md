@@ -1,6 +1,5 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a> </p>
 
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
@@ -179,29 +178,38 @@ This project management system helps teams and users manage tasks and projects e
 
 # API Routes and Access Permissions
 
-## User Management
+## Authentication
 
-- `POST /api/users` - **Admin** - Creates a new user
-- `GET /api/users` - **Admin** - Retrieves a list of all users
-- `GET /api/users/:id` - **Admin, Project Manager** - Gets user information by ID
-- `PATCH /api/users/:id` - **Admin** - Updates user information by ID
-- `DELETE /api/users/:id` - **Admin** - Deletes a user by ID
-- `PATCH /api/users/:id/role` - **Admin** - Changes the role of a user
+- `POST /api/auth/register` - **All Users** - Registers a new user
+- `POST /api/auth/login` - **All Users** - User login and receives JWT token
+- `POST /api/auth/logout` - **All Users** - Logs out and revokes token
 
 ---
 
-## Project Management
-
-- `POST /api/projects` - **Admin, Project Manager** - Creates a new project
-- `GET /api/projects` - **Admin, Project Manager** - Retrieves a list of all projects
-- `GET /api/projects/:id` - **Admin, Project Manager, Regular User** - Gets project details by ID
-- `PATCH /api/projects/:id` - **Admin, Project Manager** - Updates project information by ID
-- `DELETE /api/projects/:id` - **Admin** - Deletes a project by ID
-- `POST /api/projects/:id/users` - **Admin, Project Manager** - Adds a user to the project
-- `GET /api/projects/:id/users` - **Admin, Project Manager** - Retrieves a list of users in a project
+## User Management
 
 - `GET /api/user/me` - **All Users** - Views logged-in user's profile
+- `PATCH /api/user/me` - **Admin** - Updates user information by ID
+- `DELETE /api/users/me` - **Admin** - Deletes a user by ID
 
+---
+
+## Admin
+
+- `POST /api/user` - **Admin** - Creates a new user
+- `GET /api/users` - **Admin** - Retrieves a list of all users
+- `GET /api/users/:id` - **Admin, Project Manager** - Gets user information by ID
+- `PATCH /api/users/:id/role` - **Admin** - Changes the role of a user
+
+## Project Management
+
+- `POST /api/project` - **Admin, Project Manager** - Creates a new project
+- `GET /api/project` - **Admin, Project Manager** - Retrieves a list of all projects
+- `GET /api/project/:id` - **Admin, Project Manager, Regular User** - Gets project details by ID
+- `PATCH /api/project/:id` - **Admin, Project Manager** - Updates project information by ID
+- `DELETE /api/project/:id` - **Admin** - Deletes a project by ID
+- `POST /api/project/:id/users` - **Admin, Project Manager** - Adds a user to the project
+- `GET /api/project/:id/users` - **Admin, Project Manager** - Retrieves a list of users in a project
 - `GET /api/projects/:id/tasks` - **Admin, Project Manager, Regular User** - Retrieves tasks in a project
 
 ---
@@ -224,14 +232,6 @@ This project management system helps teams and users manage tasks and projects e
 - `GET /api/activity-logs?userId=:userId` - **Admin, Project Manager** - Gets activities for a specific user
 - `GET /api/activity-logs?projectId=:projectId` - **Admin, Project Manager** - Gets activities for a specific project
 - `GET /api/activity-logs?taskId=:taskId` - **Admin, Project Manager, Regular User** - Gets activities for a specific task
-
----
-
-## Authentication
-
-- `POST /api/auth/register` - **All Users** - Registers a new user
-- `POST /api/auth/login` - **All Users** - User login and receives JWT token
-- `POST /api/auth/logout` - **All Users** - Logs out and revokes token
 
 ---
 
