@@ -2,14 +2,15 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { JwtCustomeService } from "./jwt.service";
 import { JsonWebTokenError } from "@nestjs/jwt";
 import { UserTokenService } from "./userToken.service";
+import { Request } from "express";
 
 
 @Injectable()
 export class TokenGuard implements CanActivate{
     constructor(private readonly jwt:JwtCustomeService, private readonly userTokenService:UserTokenService){}
     async canActivate(context: ExecutionContext): Promise<boolean>  {
-        const req = context.switchToHttp().getRequest();
-        const {refreshToken}= req.body;
+        const req = context.switchToHttp().getRequest<Request>();
+        const {refreshToken}= req.cookies;
         try{
             //verify token 
             await this.jwt.verifyRefreshToken(refreshToken);
