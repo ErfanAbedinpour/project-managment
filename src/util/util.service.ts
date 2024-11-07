@@ -20,4 +20,8 @@ export class UtilService{
         return day*24*60*60*1000 + Date.now();
     }
 
+    generateUniqueCode(min:number,max:number){
+        return Math.floor(Math.random() * (max-min)+min);
+    }
+
 }
