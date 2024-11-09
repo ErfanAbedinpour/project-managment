@@ -11,6 +11,7 @@ import { UserTokenService } from "../userToken/userToken.service";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { UserTokens } from "../userToken/userTokens.decorator";
+import { TokenGuard } from "../userToken/token.guard";
 
 @Controller('/user')
 @UseGuards(IsAuth)
@@ -30,18 +31,14 @@ export class UserController{
     // update user
     @Patch()
     @ResponseSerializer(UserResponseDTO)
+    @UseGuards(TokenGuard)
     async updateUser(
       @CurentUser() user:AccessTokenPyload,
       @Body() body:UserUpdatedBodyDTO,
       @Res({passthrough:true}) res:Response,
       @UserTokens() userToken:UserTokenParam){
       try{
-        const newUser = await this.userService.updateUser({id:user.id,data:body});
-
-        await this.userToken.deleteToken({token:userToken.refreshToken});
-        // set accessToken into blackList
-        await this.cache.set(btoa(userToken.accessToken),userToken.accessToken);
-
+        const newUser = await this.userService.updateUser({id:user.id,data:body,accessToken:userToken.accessToken,refreshToken:userToken.refreshToken});
         res.clearCookie("accessToken");
         res.clearCookie("refreshToken");
         return newUser;
