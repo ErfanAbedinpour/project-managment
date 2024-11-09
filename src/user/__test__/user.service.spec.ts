@@ -7,6 +7,11 @@ import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
 import { CreateUserDTO } from 'src/auth/dtos/auth.dto';
 import { AuthService } from 'src/auth/auth.service';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { UtilModule } from '../../util/util.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { UserTokenService } from '../../userToken/userToken.service';
+import { UserTokenModule } from '../../userToken/userToken.module';
 
 describe('user Service', () => {
   let userService: UserServices;
@@ -32,13 +37,24 @@ describe('user Service', () => {
     display_name: 'nice',
   };
 
+
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
           envFilePath: join(process.cwd(), `.env.test`),
+          isGlobal:true
         }),
         PrismaModule,
+        MailerModule.forRoot({
+          transport:{
+            host:"gmail",
+            auth:{},
+          }
+        }),
+        UtilModule,
+        CacheModule.register({isGlobal:true}),
+        UserTokenModule 
       ],
       providers: [UserServices],
     }).compile();
@@ -90,13 +106,8 @@ describe('user Service', () => {
   });
 
   it('should be change user2 username to new usename', async () => {
-    const newUser = await userService.updateUser({
-      id:user2.id,
-      data: {
-        username: 'newUser2',
-      },
-    });
-
+    const newUser = await userService.updateUser({id:user2.id,data:{username:"newUser2"}});
+    console.log(newUser)
     //change user2 username to new username
     user2.username = newUser.username;
     // tests

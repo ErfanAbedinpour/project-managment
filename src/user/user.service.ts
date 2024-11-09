@@ -48,8 +48,8 @@ export class UserServices {
     });
   }
 
-  async updateUser(params: { id: number, data: Prisma.UserUpdateInput, refreshToken: string, accessToken: string }): Promise<{ id: number, username: string, display_name: string; profile: string }> {
-    const { id, data, refreshToken, accessToken } = params;
+  async updateUser(params: { id: number, data: Prisma.UserUpdateInput}): Promise<Omit<UserDTO,'password'>> {
+    const { id, data} = params;
     try {
       const newUser = await this.prisma.user.update({
         where: {
@@ -65,9 +65,7 @@ export class UserServices {
         }
       })
       //remove user Token
-      await this.userToken.deleteToken({ token: refreshToken });
-      // add userAccessToken to blackList
-      await this.cache.set(btoa(accessToken), accessToken);
+      await this.userToken.deleteToken({ userId: id});
 
       return newUser;
     } catch (err) {

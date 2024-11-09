@@ -11,6 +11,7 @@ import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { UserTokens } from "../userToken/userTokens.decorator";
 import { TokenGuard } from "../userToken/token.guard";
+import { UserTokenService } from "../userToken/userToken.service";
 
 @Controller('/user')
 @UseGuards(IsAuth)
@@ -18,6 +19,7 @@ export class UserController{
     constructor( 
       private readonly userService:UserServices,
       @Inject(CACHE_MANAGER) private readonly cache:Cache,
+      private readonly userToken:UserTokenService
     ){
     }
 
@@ -36,7 +38,10 @@ export class UserController{
       @Res({passthrough:true}) res:Response,
       @UserTokens() userToken:UserTokenParam){
       try{
-        const newUser = await this.userService.updateUser({id:user.id,data:body,accessToken:userToken.accessToken,refreshToken:userToken.refreshToken});
+        const newUser = await this.userService.updateUser({id:user.id,data:body});
+        // add userAccessToken to blackList
+        await this.cache.set(btoa(userToken.accessToken), userToken.accessToken);
+
         res.clearCookie("accessToken");
         res.clearCookie("refreshToken");
         return newUser;
