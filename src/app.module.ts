@@ -28,7 +28,8 @@ import { IEnvironmentVariables } from './type';
       useFactory:(env:ConfigService<IEnvironmentVariables>)=>{
         return {
           transport:{
-            host:env.getOrThrow<string>("EMAIL_HOST"),
+            // host:env.getOrThrow<string>("EMAIL_HOST"),
+            service:'gmail',
             auth:{
               user:env.getOrThrow<string>("EMAIL_USERNAME"),
               pass:env.getOrThrow<string>("EMAIL_PASSWORD") 
