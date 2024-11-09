@@ -21,7 +21,7 @@ model User {
   display_name       String               @db.VarChar(50)
   password           String               @db.VarChar(200)
   role               Role                 @default(USER)
-  profile            String?              @default("default") @db.VarChar(200)
+  profile            String               @default("default") @db.VarChar(200)
   Project            Project[]
   Task               Task[]
   createdAt          DateTime             @default(now())
@@ -37,11 +37,11 @@ model Project {
   name         String         @db.VarChar(100)
   description  String         @db.Text()
   staus        ProjectStatus  @default(ACTIVE)
-  startDate    DateTime?
-  endDate      DateTime?
+  startDate    DateTime
+  endDate      DateTime
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
-  owner        User?          @relation(fields: [ownerId], references: [id])
+  owner        User           @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   ownerId      Int            @unique()
   isPublic     Boolean        @default(true)
   Task         Task[]
@@ -50,9 +50,9 @@ model Project {
 }
 
 model UserProjects {
-  project   Project  @relation(fields: [projectId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   projectId Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    Int
   joinedAt  DateTime @default(now())
 
@@ -68,14 +68,14 @@ model Task {
   dueDate     DateTime
   Project     Project    @relation(fields: [ProjectId], references: [id])
   ProjectId   Int
-  User        User       @relation(fields: [userId], references: [id])
+  User        User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId      Int
   Activity    Activity[]
 }
 
 model Activity {
   id        Int      @id() @default(autoincrement())
-  project   Project  @relation(fields: [projectId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   projectId Int
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
@@ -90,7 +90,7 @@ model UserToken {
 
   token String @unique @db.VarChar(300)
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   userId Int
 
@@ -106,7 +106,7 @@ model ResetPasswordToken {
 
   token String @db.Uuid()
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   userId Int @unique()
 
