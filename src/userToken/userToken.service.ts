@@ -43,18 +43,18 @@ export class UserTokenService {
 
 
   async updateToken(params: {
-    where: Prisma.UserTokenWhereUniqueInput;
+    where: Prisma.UserTokenWhereInput;
     data: Prisma.UserTokenUpdateInput;
-  }): Promise<UserToken> {
+  }): Promise<Prisma.BatchPayload> {
     const { where, data } = params;
-    return this.prisma.userToken.update({
+    return this.prisma.userToken.updateMany({
       data,
       where,
     });
   }
 
-  async deleteToken(where: Prisma.UserTokenWhereUniqueInput): Promise<UserToken> {
-    return this.prisma.userToken.delete({
+  deleteToken(where: Prisma.UserTokenWhereInput): Promise<Prisma.BatchPayload> {
+    return this.prisma.userToken.deleteMany({
       where,
     });
   }
