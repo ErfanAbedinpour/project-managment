@@ -130,9 +130,9 @@ export class UserServices {
           display_name:true
         }
       })
+      //remove code from cache
       await this.cache.del(userId.toString());
       return {success:true,user:user}
-
     }catch(err){
       throw err
     }
