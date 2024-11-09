@@ -1,5 +1,5 @@
 import { Exclude, Expose } from "class-transformer";
-import { IsEmail, IsOptional, IsString,  MaxLength, MinLength, Validate, ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
+import { IsEmail, IsNotEmpty, isNotEmpty, IsNumber, IsOptional, IsString,  MaxLength, MinLength, Validate, ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 
 
 
@@ -53,4 +53,10 @@ export class UserResponseDTO{
     role:string
     @Exclude()
     username:string
+}
+
+export class VerifyCodeDTO{
+    @IsNotEmpty()
+    @IsNumber()
+    code:number
 }

@@ -3,11 +3,10 @@ import {Response} from 'express';
 import { CurentUser } from "./user.decorator";
 import { AccessTokenPyload, UserTokenParam } from "../userToken/dtos/token.dto";
 import { UserServices } from "./user.service";
-import { UserResponseDTO, UserUpdatedBodyDTO } from "./dtos/user.dto";
+import { UserResponseDTO, UserUpdatedBodyDTO,  VerifyCodeDTO } from "./dtos/user.dto";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { IsAuth } from "../auth/auth.guard";
 import { ResponseSerializer } from "../interceptor/response.interceptor";
-import { UserTokenService } from "../userToken/userToken.service";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { UserTokens } from "../userToken/userTokens.decorator";
@@ -18,7 +17,6 @@ import { TokenGuard } from "../userToken/token.guard";
 export class UserController{
     constructor( 
       private readonly userService:UserServices,
-      private readonly userToken:UserTokenService,
       @Inject(CACHE_MANAGER) private readonly cache:Cache,
     ){
     }
@@ -60,16 +58,21 @@ export class UserController{
     }
 
     @Delete()
-    deleteUser(@CurentUser() me:AccessTokenPyload,@UserTokens() tokens:UserTokenParam){
-      /** 
-       * TODO: validate User
-       * TODO: send verified  code for user email
-       * TODO: if confirm code remove User
-      */
+    deleteUser(@CurentUser() me:AccessTokenPyload){
      return this.userService.deleteAccount(me.id); 
     }
 
-    @Post("verify")
-    verifyCode(){}
+    @Delete("verify")
+    async verifyCode(@Res({passthrough:true}) res:Response,@Body() body:VerifyCodeDTO,@CurentUser() me:AccessTokenPyload){
+      try{
+        const result = await this.userService.verifyCode(me.id,body.code);
+        res.clearCookie("accessToken");
+        res.clearCookie("refreshToken");       
+        return result;
+      }catch(err){
+        throw err;
+      }
+      
+    }
 
 }

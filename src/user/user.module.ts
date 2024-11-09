@@ -4,6 +4,8 @@ import { UserController } from "./user.controller";
 import { PrismaModule } from "../prisma/prisma.module";
 import { UserTokenModule } from "../userToken/userToken.module";
 import { UtilModule } from "../util/util.module";
+import { APP_GUARD } from "@nestjs/core";
+import { IsAuth } from "../auth/auth.guard";
 
 
 

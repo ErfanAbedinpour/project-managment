@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, HttpException, Inject, Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -7,6 +7,7 @@ import { SentMessageInfo } from 'nodemailer';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { UserTokenService } from '../userToken/userToken.service';
+import { UserDTO } from '../auth/dtos/auth.dto';
 
 @Injectable()
 export class UserServices {
@@ -87,23 +88,53 @@ export class UserServices {
         throw new BadRequestException("user does not found");
 
       let code = this.util.generateUniqueCode(10000, 99999);
+      // set user verify code into cache
       await this.cache.set(user.id.toString(), code);
-      // TODO: check if key is duplicate value is replace with that or not?
 
       const info = await this.mailer.sendMail({
         to: user.email,
         from: "Mini Github",
         subject: "Delete account Verification Code",
-        text: `Your verification code is ${code}`,
+        text: `Your verification code is ${code} code will remove from 30 minute`,
       })
 
       return { success: true, mailInfo: info }
 
     } catch (err) {
+      console.error(err);
       throw err;
     }
   }
 
 
-  async verifyCode(code: number) { }
+  async verifyCode(userId:number,code: number):Promise<{success:boolean,user:Omit<UserDTO,'password'>}>{
+    try{
+      const userCode =await this.cache.get(userId.toString());
+      if(!userCode)
+        throw new ForbiddenException("code in expired. please take another");
+
+      if(userCode!==code) 
+        throw new ForbiddenException("code in wrong. ");
+
+
+      const user = await this.prisma.user.delete({
+        where:{
+          id:userId,
+        },
+        select:{
+          id:true,
+          username:true,
+          role:true,
+          email:true,
+          profile:true,
+          display_name:true
+        }
+      })
+      await this.cache.del(userId.toString());
+      return {success:true,user:user}
+
+    }catch(err){
+      throw err
+    }
+  }
 }
