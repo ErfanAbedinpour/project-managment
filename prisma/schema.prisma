@@ -90,7 +90,7 @@ model UserToken {
 
   token String @unique @db.VarChar(300)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   userId Int
 
