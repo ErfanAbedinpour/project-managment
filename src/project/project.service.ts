@@ -1,13 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ProjectDTO } from './dtos/projects.dto';
 
 @Injectable()
 export class ProjectService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(project: Prisma.ProjectCreateInput): Promise<Project> {
-    return this.prisma.project.create({ data: project });
+  create(project: ProjectDTO,userId:number): Promise<Project> {
+    return this.prisma.project.create({
+      data:{
+        endDate:project.endDate ,
+        startDate:project.startDate ,
+        staus:project.status,
+        name:project.name,
+        description:project.describtion,
+        isPublic:project.isPublic,
+        owner:{
+          connect:{
+            id:userId
+          }
+        }
+
+      }
+     });
   }
 
   project(where: Prisma.ProjectWhereInput): Promise<Project | null> {

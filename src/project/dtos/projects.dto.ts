@@ -1,5 +1,6 @@
 import { IsBoolean, IsDate, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, Min, MinLength } from "class-validator";
 import { PROJECT_STATUS } from "../../type/enums";
+import { Type } from "class-transformer";
 
 export class ProjectDTO{
     @IsNotEmpty()
@@ -15,12 +16,11 @@ export class ProjectDTO{
     @IsEnum(PROJECT_STATUS)
     status:PROJECT_STATUS;
     @IsDate()
-    @IsOptional()
+    @Type(()=>Date)
     startDate:Date
     @IsDate()
-    @IsOptional()
+    @Type(()=>Date)
     endDate:Date
-    @IsOptional()
     @IsBoolean()
-    isPubluc:boolean
+    isPublic:boolean
 }
