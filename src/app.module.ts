@@ -8,6 +8,7 @@ import { UserTokenModule} from './userToken/userToken.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { IEnvironmentVariables } from './type';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -17,9 +18,9 @@ import { IEnvironmentVariables } from './type';
       envFilePath: join(process.cwd(), `.env.${process.env.NODE_ENV}`),
     }),
     AuthModule,
-    PrismaModule,
     UserModule,
-    UserTokenModule ,
+    UserTokenModule,
+    ProjectModule,
     CacheModule.register({
       isGlobal:true,
       ttl:30*60*1000
