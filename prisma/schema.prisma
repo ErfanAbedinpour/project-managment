@@ -26,30 +26,30 @@ model User {
   Task               Task[]
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
-  UserProjects       UserProjects[]
+  UserProjects       ProjectContributer[]
   Activity           Activity[]
   UserToken          UserToken[]
   ResetPasswordToken ResetPasswordToken[]
 }
 
 model Project {
-  id           Int            @id() @default(autoincrement())
-  name         String         @db.VarChar(100)
-  description  String         @db.Text()
-  staus        ProjectStatus  @default(ACTIVE)
-  startDate    DateTime
-  endDate      DateTime
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  owner        User           @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  ownerId      Int            @unique()
-  isPublic     Boolean        @default(true)
-  Task         Task[]
-  UserProjects UserProjects[]
-  Activity     Activity[]
+  id                 Int                  @id() @default(autoincrement())
+  name               String               @db.VarChar(100)
+  description        String               @db.Text()
+  staus              ProjectStatus        @default(ACTIVE)
+  startDate          DateTime
+  endDate            DateTime
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  owner              User                 @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ownerId            Int
+  isPublic           Boolean              @default(true)
+  Task               Task[]
+  ProjectContributer ProjectContributer[]
+  Activity           Activity[]
 }
 
-model UserProjects {
+model ProjectContributer {
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   projectId Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)

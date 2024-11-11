@@ -146,12 +146,13 @@ This project management system helps teams and users manage tasks and projects e
 
 ## Relationships
 
-1. **User to Project**: Many-to-Many (A user can belong to multiple projects, and a project can have multiple users.)
-2. **Project to Task**: One-to-Many (A project contains multiple tasks, and each task belongs to one project.)
-3. **User to Task**: One-to-Many (A user can be assigned to multiple tasks, but each task has only one assignee.)
-4. **User to ActivityLog**: One-to-Many (A user can have multiple logged activities.)
-5. **Project to ActivityLog**: One-to-Many (A project can have multiple associated activity logs.)
-6. **Task to ActivityLog**: One-to-Many (A task can have multiple associated activity logs.)
+1. **User to Project**: One-to-Many (A user can belong to multiple projects, and a project can have one user.)
+2. **PrjectContributer**: Many-to-Many(A user can contribute On multiple Project and A Project can have multiple Contributer)
+3. **Project to Task**: One-to-Many (A project contains multiple tasks, and each task belongs to one project.)
+4. **User to Task**: One-to-Many (A user can be assigned to multiple tasks, but each task has only one assignee.)
+5. **User to ActivityLog**: One-to-Many (A user can have multiple logged activities.)
+6. **Project to ActivityLog**: One-to-Many (A project can have multiple associated activity logs.)
+7. **Task to ActivityLog**: One-to-Many (A task can have multiple associated activity logs.)
 
 ---
 
