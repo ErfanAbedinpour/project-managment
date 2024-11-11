@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProjectDTO } from './dtos/projects.dto';
@@ -7,7 +7,11 @@ import { ProjectDTO } from './dtos/projects.dto';
 export class ProjectService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(project: ProjectDTO,userId:number): Promise<Project> {
+  async create(project: ProjectDTO,userId:number): Promise<Project> {
+    const isThisNameValid = await this.prisma.project.findFirst({where:{AND:[{ownerId:userId},{name:project.name}]}});
+    if(isThisNameValid)
+      throw new BadRequestException("this name in used bu another project please change");
+
     return this.prisma.project.create({
       data:{
         endDate:project.endDate ,
@@ -21,7 +25,6 @@ export class ProjectService {
             id:userId
           }
         }
-
       }
      });
   }

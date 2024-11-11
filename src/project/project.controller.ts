@@ -6,10 +6,10 @@ import { ProjectService } from './project.service';
 import { CurentUser } from '../user/user.decorator';
 
 @Controller('project')
+@UseGuards(IsAuth)
 export class ProjectController {
   constructor(private readonly projectService:ProjectService){}
   @Post()
-  @UseGuards(IsAuth)
   createProject(@Body() body:ProjectDTO,@CurentUser() me:AccessTokenPyload) {
     try{
       return this.projectService.create(body,me.id);
