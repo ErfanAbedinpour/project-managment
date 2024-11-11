@@ -47,6 +47,8 @@ model Project {
   Task               Task[]
   ProjectContributer ProjectContributer[]
   Activity           Activity[]
+
+  @@unique([ownerId, name])
 }
 
 model ProjectContributer {
