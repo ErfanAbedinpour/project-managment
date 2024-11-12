@@ -39,7 +39,8 @@ export class JwtCustomeService {
     }
 
     async verifyAccessToken(token: string): Promise<AccessTokenPyload> {
-        if (!(await this.cache.get<string>(btoa(token))))
+        const isInBlackLIst = await this.cache.get<string>(btoa(token))
+        if (isInBlackLIst)
             throw new Error("token is in blackList");
         return this.accessTokenJwt.verifyAsync(token);
     }
