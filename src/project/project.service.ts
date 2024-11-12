@@ -1,9 +1,8 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProjectDTO, UpdateProjectDTO } from './dtos/projects.dto';
 import { UserServices } from '../user/user.service';
-import { UserDTO } from '../auth/dtos/auth.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
@@ -114,8 +113,15 @@ export class ProjectService {
     })
   }
 
-  deleteProject(where: Prisma.ProjectWhereUniqueInput) {
-    return this.prisma.project.delete({ where });
+  async deleteProject(id: number, username: string) {
+    try {
+      return await this.prisma.project.delete({ where: { id, owner: { username } } });
+    } catch (err) {
+      if (err instanceof PrismaClientKnownRequestError)
+        throw new NotFoundException(err.meta.cause)
+
+      throw err
+    }
   }
 
   async updateProject(params: {

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { BadGatewayException, BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { IsAuth } from '../auth/auth.guard';
 import { ProjectDTO, UpdateProjectDTO } from './dtos/projects.dto';
 import { AccessTokenPyload } from '../userToken/dtos/token.dto';
@@ -47,6 +47,9 @@ export class ProjectController {
     return this.projectService.updateProject({ data: body, projectId: id, username: me.username });
   }
 
-  @Delete()
-  deleteProject() { }
+  @Delete("/:id")
+  @UseGuards(IsAuth)
+  async deleteProject(@Param("id", ParseIntPipe) id: number, @CurentUser() me: AccessTokenPyload) {
+    return await this.projectService.deleteProject(id, me.username);
+  }
 }
