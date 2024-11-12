@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, InternalServerErrorException, NotFoundException, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { IsAuth } from '../auth/auth.guard';
-import { ProjectDTO } from './dtos/projects.dto';
+import { ProjectDTO, UpdateProjectDTO } from './dtos/projects.dto';
 import { AccessTokenPyload } from '../userToken/dtos/token.dto';
 import { ProjectService } from './project.service';
 import { CurentUser } from '../user/user.decorator';
@@ -22,8 +22,8 @@ export class ProjectController {
 
   //Get user Repository
   @Get("/:username")
-  getUserRepository(@Param("username") username: string, @Query("page") page: string, @CurentUser() me: AccessTokenPyload) {
-    return this.projectService.getProjectsByUsername({ username: username, page: Number(page || 1), isAccessToPublic: me?.username === username },)
+  getUserRepository(@Param("username") username: string, @Query("page", ParseIntPipe) page: number, @CurentUser() me: AccessTokenPyload) {
+    return this.projectService.getProjectsByUsername({ username: username, page: page || 1, isAccessToPublic: me?.username === username },)
   }
 
   @Get("/:username/:name")
@@ -41,8 +41,11 @@ export class ProjectController {
     }
   }
 
-  @Patch()
-  updateProject() { }
+  @Patch("/:id")
+  @UseGuards(IsAuth)
+  updateProject(@Param("id", ParseIntPipe) id: number, @Body() body: UpdateProjectDTO, @CurentUser() me: AccessTokenPyload) {
+    return this.projectService.updateProject({ data: body, projectId: id, username: me.username });
+  }
 
   @Delete()
   deleteProject() { }

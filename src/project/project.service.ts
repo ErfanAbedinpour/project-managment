@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ProjectDTO } from './dtos/projects.dto';
+import { ProjectDTO, UpdateProjectDTO } from './dtos/projects.dto';
 import { UserServices } from '../user/user.service';
 import { UserDTO } from '../auth/dtos/auth.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ProjectService {
@@ -62,7 +63,7 @@ export class ProjectService {
       }
     })
 
-    return { projects, meta: { totalpages, totalProjects: totalRow } };
+    return { projects, meta: { totalpages, totalProjects: totalRow, page: page } };
 
   }
 
@@ -117,11 +118,34 @@ export class ProjectService {
     return this.prisma.project.delete({ where });
   }
 
-  updateProject(params: {
-    data: Prisma.ProjectCreateInput;
-    where: Prisma.ProjectWhereUniqueInput;
+  async updateProject(params: {
+    username: string;
+    projectId: number;
+    data: UpdateProjectDTO
   }) {
-    const { data, where } = params;
-    return this.prisma.project.update({ where, data });
+    const { username, projectId, data } = params;
+
+    try {
+      if (data.name) {
+        const isNameIsTaken = !!await this.prisma.project.findFirst({
+          where: { name: data.name, owner: { username } }
+        })
+        if (isNameIsTaken)
+          throw new BadRequestException("name is taken by another. please chose another");
+
+      }
+      const result = await this.prisma.project.update({
+        where: {
+          id: projectId,
+          owner: { username }
+        }, data
+      });
+      return result
+    } catch (err) {
+      if (err instanceof PrismaClientKnownRequestError)
+        throw new NotFoundException(err.meta.cause)
+
+      throw err
+    }
   }
 }

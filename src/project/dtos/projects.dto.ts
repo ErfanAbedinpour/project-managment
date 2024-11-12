@@ -3,30 +3,65 @@ import { PROJECT_STATUS } from "../../type/enums";
 import { Type } from "class-transformer";
 import { Project } from "@prisma/client";
 
-export class ProjectDTO{
+export class ProjectDTO {
     @IsNotEmpty()
     @IsString()
     @MinLength(3)
-    @MaxLength(20)
-    name:string;
+    @MaxLength(20) name: string;
     @IsString()
     @IsNotEmpty()
     @MinLength(10)
     @MaxLength(100)
-    describtion:string;
+    describtion: string;
     @IsEnum(PROJECT_STATUS)
-    status:PROJECT_STATUS;
+    status: PROJECT_STATUS;
     @IsDate()
-    @Type(()=>Date)
-    startDate:Date
+    @Type(() => Date)
+    startDate: Date
     @IsDate()
-    @Type(()=>Date)
-    endDate:Date
+    @Type(() => Date)
+    endDate: Date
     @IsBoolean()
-    isPublic:boolean
+    isPublic: boolean
 }
 
-export class UserProjectsDTO{
-    projects:Project[];
-    meta:object
+export class UserProjectsDTO {
+    projects: Project[];
+    meta: object
+}
+
+
+export class UpdateProjectDTO {
+    @IsNotEmpty()
+    @IsString()
+    @MinLength(3)
+    @MaxLength(20)
+    @IsOptional()
+    name: string;
+
+    @IsString()
+    @IsOptional()
+    @IsNotEmpty()
+    @MinLength(10)
+    @MaxLength(100)
+    describtion: string;
+
+    @IsEnum(PROJECT_STATUS)
+    @IsOptional()
+    status: PROJECT_STATUS;
+
+    @IsDate()
+    @Type(() => Date)
+    @IsOptional()
+    startDate: Date
+
+    @IsDate()
+    @Type(() => Date)
+    @IsOptional()
+    endDate: Date
+
+    @IsBoolean()
+    @IsOptional()
+    isPublic: boolean
+
 }
