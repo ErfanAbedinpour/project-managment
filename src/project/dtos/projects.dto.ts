@@ -1,6 +1,7 @@
 import { IsBoolean, IsDate, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, Min, MinLength } from "class-validator";
 import { PROJECT_STATUS } from "../../type/enums";
 import { Type } from "class-transformer";
+import { Project } from "@prisma/client";
 
 export class ProjectDTO{
     @IsNotEmpty()
@@ -23,4 +24,9 @@ export class ProjectDTO{
     endDate:Date
     @IsBoolean()
     isPublic:boolean
+}
+
+export class UserProjectsDTO{
+    projects:Project[];
+    meta:object
 }
