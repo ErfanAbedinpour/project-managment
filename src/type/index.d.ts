@@ -1,7 +1,9 @@
+import { AccessTokenPyload } from "../userToken/dtos/token.dto";
+
 declare global {
   namespace Express {
     interface Request {
-      user?: TokenPaylaod;
+      user?: AccessTokenPyload;
     }
   }
 }
