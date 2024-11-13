@@ -38,6 +38,7 @@ export class ProjectController {
 
     } catch (err) {
       console.error(err);
+      throw new InternalServerErrorException(err.message)
     }
   }
 
@@ -49,7 +50,7 @@ export class ProjectController {
 
   @Delete("/:id")
   @UseGuards(IsAuth)
-  async deleteProject(@Param("id", ParseIntPipe) id: number, @CurentUser() me: AccessTokenPyload) {
-    return await this.projectService.deleteProject(id, me.username);
+  deleteProject(@Param("id", ParseIntPipe) id: number, @CurentUser() me: AccessTokenPyload) {
+    return this.projectService.deleteProject(id, me.username);
   }
 }
