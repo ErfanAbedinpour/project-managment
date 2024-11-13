@@ -14,24 +14,32 @@ export class ProjectService {
     if (isThisNameValid)
       throw new BadRequestException("this name in used bu another project please change");
 
-    return this.prisma.project.create({
-      data: {
-        endDate: project.endDate,
-        startDate: project.startDate,
-        staus: project.status,
-        name: project.name,
-        description: project.describtion,
-        isPublic: project.isPublic,
-        owner: {
-          connect: {
-            id: userId
+    try {
+      const result = await this.prisma.project.create({
+        data: {
+          status: project.status,
+          name: project.name,
+          description: project.describtion,
+          isPublic: project.isPublic,
+          owner: {
+            connect: {
+              id: userId
+            },
           }
-        }
-      }
-    });
+        },
+        include: { owner: { select: { role: true } } }
+      })
+      return result
+
+    } catch (err) {
+      if (err instanceof PrismaClientKnownRequestError)
+        throw new BadRequestException(err.meta.cause);
+
+      throw new InternalServerErrorException()
+    }
   }
 
-  async getProjectsByUsername(params: { username: string, isAccessToPublic: boolean, page: number }): Promise<{ projects: Project[], meta: object }> {
+  async getUserRepositoryByUsername(params: { username: string, isAccessToPublic: boolean, page: number }): Promise<{ projects: Project[], meta: object }> {
     let { page, username, isAccessToPublic } = params;
     let where: Prisma.ProjectWhereInput = {
       owner: { username }
@@ -90,9 +98,7 @@ export class ProjectService {
         Task: {
           select: {
             title: true,
-            dueDate: true,
             id: true,
-            priority: true,
             status: true,
             User: {
               select: {

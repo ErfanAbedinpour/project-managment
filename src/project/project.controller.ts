@@ -1,5 +1,5 @@
 import { BadGatewayException, BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { IsAuth } from '../auth/auth.guard';
+import { IsAuth } from '../gurad/auth.guard';
 import { ProjectDTO, UpdateProjectDTO } from './dtos/projects.dto';
 import { AccessTokenPyload } from '../userToken/dtos/token.dto';
 import { ProjectService } from './project.service';
@@ -23,7 +23,7 @@ export class ProjectController {
   //Get user Repository
   @Get("/:username")
   getUserRepository(@Param("username") username: string, @Query("page", ParseIntPipe) page: number, @CurentUser() me: AccessTokenPyload) {
-    return this.projectService.getProjectsByUsername({ username: username, page: page || 1, isAccessToPublic: me?.username === username },)
+    return this.projectService.getUserRepositoryByUsername({ username: username, page: page || 1, isAccessToPublic: me?.username === username },)
   }
 
   @Get("/:username/:name")

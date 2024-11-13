@@ -15,12 +15,6 @@ export class ProjectDTO {
     describtion: string;
     @IsEnum(PROJECT_STATUS)
     status: PROJECT_STATUS;
-    @IsDate()
-    @Type(() => Date)
-    startDate: Date
-    @IsDate()
-    @Type(() => Date)
-    endDate: Date
     @IsBoolean()
     isPublic: boolean
 }
@@ -49,16 +43,6 @@ export class UpdateProjectDTO {
     @IsEnum(PROJECT_STATUS)
     @IsOptional()
     status: PROJECT_STATUS;
-
-    @IsDate()
-    @Type(() => Date)
-    @IsOptional()
-    startDate: Date
-
-    @IsDate()
-    @Type(() => Date)
-    @IsOptional()
-    endDate: Date
 
     @IsBoolean()
     @IsOptional()
