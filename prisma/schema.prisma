@@ -36,9 +36,7 @@ model Project {
   id                 Int                  @id() @default(autoincrement())
   name               String               @db.VarChar(100)
   description        String               @db.Text()
-  staus              ProjectStatus        @default(ACTIVE)
-  startDate          DateTime
-  endDate            DateTime
+  status             ProjectStatus        @default(ACTIVE)
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   owner              User                 @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -66,8 +64,6 @@ model Task {
   title       String     @db.VarChar(200)
   description String     @db.VarChar(200)
   status      TaskStatus @default(INQUEUE)
-  priority    Priority   @default(LOW)
-  dueDate     DateTime
   Project     Project    @relation(fields: [ProjectId], references: [id])
   ProjectId   Int
   User        User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -83,7 +79,7 @@ model Activity {
   userId    Int
   task      Task     @relation(fields: [taskId], references: [id])
   taskId    Int
-  action    String   @db.VarChar(100)
+  sumarry   String   @db.VarChar(100)
   date      DateTime @default(now())
 }
 
@@ -117,12 +113,6 @@ model ResetPasswordToken {
   expireAt DateTime
 }
 
-enum Priority {
-  HIGH
-  MID
-  LOW
-}
-
 enum TaskStatus {
   PENDING
   DONE
@@ -136,7 +126,6 @@ enum ProjectStatus {
 }
 
 enum Role {
-  ADMIN
   USER
-  PROJECT_MANGER
+  ADMIN
 }
