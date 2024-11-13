@@ -5,14 +5,14 @@ import { PrismaModule } from "../prisma/prisma.module";
 import { UserTokenModule } from "../userToken/userToken.module";
 import { UtilModule } from "../util/util.module";
 import { APP_GUARD } from "@nestjs/core";
-import { IsAuth } from "../auth/auth.guard";
+import { IsAuth } from "../gurad/auth.guard";
 
 
 
 @Module({
-    imports:[PrismaModule,UserTokenModule,UserTokenModule,UtilModule],
-    exports:[UserServices],
-    controllers:[UserController],
-    providers:[UserServices]
+    imports: [PrismaModule, UserTokenModule, UserTokenModule, UtilModule],
+    exports: [UserServices],
+    controllers: [UserController],
+    providers: [UserServices]
 })
-export class UserModule{}
+export class UserModule { }
