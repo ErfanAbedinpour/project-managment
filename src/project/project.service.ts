@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProjectDTO, UpdateProjectDTO } from './dtos/projects.dto';
@@ -119,8 +119,7 @@ export class ProjectService {
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError)
         throw new NotFoundException(err.meta.cause)
-
-      throw err
+      throw new InternalServerErrorException()
     }
   }
 
@@ -130,28 +129,28 @@ export class ProjectService {
     data: UpdateProjectDTO
   }) {
     const { username, projectId, data } = params;
+    // check project name is unique or not
+    if (data.name) {
+      const isNameIsTaken = !!await this.prisma.project.findFirst({
+        where: { name: data.name, owner: { username } }
+      })
+      if (isNameIsTaken)
+        throw new BadRequestException("name is taken by another. please chose another");
+    }
 
     try {
-      if (data.name) {
-        const isNameIsTaken = !!await this.prisma.project.findFirst({
-          where: { name: data.name, owner: { username } }
-        })
-        if (isNameIsTaken)
-          throw new BadRequestException("name is taken by another. please chose another");
 
-      }
-      const result = await this.prisma.project.update({
+      return await this.prisma.project.update({
         where: {
           id: projectId,
           owner: { username }
         }, data
       });
-      return result
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError)
         throw new NotFoundException(err.meta.cause)
 
-      throw err
+      throw new InternalServerErrorException()
     }
   }
 }
