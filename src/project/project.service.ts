@@ -159,4 +159,19 @@ export class ProjectService {
       throw new InternalServerErrorException()
     }
   }
+
+  async getProjectById(projectId: number) {
+    return this.prisma.project.findFirst({
+      where: { id: projectId }, select: {
+        owner: {
+          select: {
+            username: true,
+            profile: true,
+            display_name: true,
+            id: true,
+          }
+        }
+      }
+    });
+  }
 }
