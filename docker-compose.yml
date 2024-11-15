@@ -1,0 +1,77 @@
+version: '3.0'
+
+services:
+  app:
+    build: .
+    env_file:
+      - .env
+    depends_on:
+
+      migrate:
+        condition: service_completed_successfully
+      psql:
+        condition: service_started
+
+    ports:
+      - '3000:3000'
+    networks:
+      - app
+    command: [ "npm", "run", "start:dev" ]
+
+    develop:
+      watch:
+        - path: ./package.json
+          action: rebuild
+        - path: .
+          target: src/
+          action: sync
+
+  migrate:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: no
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    command: [ "npx", "prisma", "migrate", "deploy" ]
+    networks:
+      - app
+    depends_on:
+      psql:
+        condition: service_started
+
+  psql:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - app
+    expose:
+      - 5432
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - psql
+    environment:
+      ADMINER_DEFAULT_SERVER: postgresDb
+    ports:
+      - 8080:8080
+    networks:
+      - app
+
+volumes:
+  app:
+  db:
+
+
+networks:
+  app:
+    driver: bridge

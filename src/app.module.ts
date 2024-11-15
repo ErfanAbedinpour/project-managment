@@ -15,7 +15,7 @@ import { ContributeModule } from './contribute/contribute.module';
     ConfigModule.forRoot({
       cache: true,
       isGlobal: true,
-      envFilePath: join(process.cwd(), `.env.${process.env.NODE_ENV}`),
+      envFilePath: join(process.cwd(), `.env`),
     }),
     CacheModule.register({
       isGlobal: true,
