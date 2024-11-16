@@ -19,37 +19,12 @@ export class UserServices {
     private readonly userToken: UserTokenService
   ) { }
 
-  async user(
-    where: Prisma.UserWhereInput,
-  ): Promise<User | null> {
-    return this.prisma.user.findFirst({
-      where: where,
-    });
+  async findUserById(id: number): Promise<User> {
+    return this.prisma.user.findFirst({ where: { id } });
   }
 
-  createUser(user: Prisma.UserCreateInput) {
-    return this.prisma.user.create({ data: user });
-  }
-
-  async users(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.UserWhereUniqueInput;
-    where?: Prisma.UserWhereInput;
-    orderBy?: Prisma.UserOrderByWithRelationInput;
-  }): Promise<User[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.user.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
-    });
-  }
-
-  async updateUser(params: { id: number, data: Prisma.UserUpdateInput}): Promise<Omit<UserDTO,'password'>> {
-    const { id, data} = params;
+  async updateUser(params: { id: number, data: Prisma.UserUpdateInput }): Promise<Omit<UserDTO, 'password'>> {
+    const { id, data } = params;
     try {
       const newUser = await this.prisma.user.update({
         where: {
@@ -65,7 +40,7 @@ export class UserServices {
         }
       })
       //remove user Token
-      await this.userToken.deleteToken({ userId: id});
+      await this.userToken.deleteToken({ userId: id });
 
       return newUser;
     } catch (err) {
@@ -81,7 +56,7 @@ export class UserServices {
 
   async deleteAccount(userId: number): Promise<{ success: boolean, mailInfo: SentMessageInfo }> {
     try {
-      const user = await this.user({ id: userId });
+      const user = await this.findUserById(userId);
       if (!user)
         throw new BadRequestException("user does not found");
 
@@ -105,33 +80,33 @@ export class UserServices {
   }
 
 
-  async verifyCode(userId:number,code: number):Promise<{success:boolean,user:Omit<UserDTO,'password'>}>{
-    try{
-      const userCode =await this.cache.get(userId.toString());
-      if(!userCode)
+  async verifyCode(userId: number, code: number): Promise<{ success: boolean, user: Omit<UserDTO, 'password'> }> {
+    try {
+      const userCode = await this.cache.get(userId.toString());
+      if (!userCode)
         throw new ForbiddenException("code in expired. please take another");
 
-      if(userCode!==code) 
+      if (userCode !== code)
         throw new ForbiddenException("code in wrong. ");
 
 
       const user = await this.prisma.user.delete({
-        where:{
-          id:userId,
+        where: {
+          id: userId,
         },
-        select:{
-          id:true,
-          username:true,
-          role:true,
-          email:true,
-          profile:true,
-          display_name:true
+        select: {
+          id: true,
+          username: true,
+          role: true,
+          email: true,
+          profile: true,
+          display_name: true
         }
       })
       //remove code from cache
       await this.cache.del(userId.toString());
-      return {success:true,user:user}
-    }catch(err){
+      return { success: true, user: user }
+    } catch (err) {
       throw err
     }
   }

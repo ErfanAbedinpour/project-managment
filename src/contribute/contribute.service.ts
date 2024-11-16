@@ -30,7 +30,7 @@ export class ContributeService {
             name: projectName
         });
         // user is exist 
-        const userPromise = await this.userService.user({ id: userId });
+        const userPromise = await this.userService.findUserById(userId);
 
         const [project, user] = await Promise.all([projectPromise, userPromise])
 

@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsString } from "class-validator";
-import { CreateUserDTO } from "../../auth/dtos/auth.dto";
 import { USER_ROLE } from "../../type/enums";
+import { CreateUserDTO } from "../../auth/dtos/create-user-dto";
 
-export class UserDTO extends CreateUserDTO{
+export class UserDTO extends CreateUserDTO {
     @IsString()
     @IsNotEmpty()
-    role:USER_ROLE
+    role: USER_ROLE
 }

@@ -1,71 +1,36 @@
-import { Exclude, Expose} from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
-  IsNumber,
   IsString,
-  MaxLength,
-  MinLength,
 } from 'class-validator';
 
 
-export class UserDTO{
-    //display name
-    @Expose()
-    @IsNotEmpty()
-    display_name:string
-    //email
-    @Expose()
-    @IsNotEmpty()
-    @IsEmail()
-    email:string;
-    //username
-    @Expose()
-    @IsNotEmpty()
-    @IsString()
-    username:string;
-    @Expose()
-    @IsNotEmpty()
-    @IsString()
-    profile:string
-    @Exclude()
-    password:string
-}
-
-export class CreateUserDTO{
+export class UserDTO {
+  //display name
+  @Expose()
+  @IsNotEmpty()
+  display_name: string
   //email
+  @Expose()
+  @IsNotEmpty()
   @IsEmail()
-  @IsNotEmpty()
   email: string;
-  //password
-  @MinLength(8)
-  @MaxLength(80)
-  @IsNotEmpty()
-  password: string;
   //username
-  @MaxLength(50)
-  @MinLength(3)
+  @Expose()
   @IsNotEmpty()
+  @IsString()
   username: string;
-  @MaxLength(80)
-  @MinLength(3)
+  @Expose()
   @IsNotEmpty()
-  display_name: string;
+  @IsString()
+  profile: string
+  @Exclude()
+  password: string
 }
 
-export class LoginUserDTO{
-    @IsString()
-    @IsNotEmpty()
-    identify:string; // email or username
-    @IsString()
-    @MinLength(8)
-    @MaxLength(80)
-    password:string;
-}
-
-
-export class TokenDTO{
+export class TokenDTO {
   @IsString()
   @IsNotEmpty()
-  refreshToken:string
+  refreshToken: string
 }

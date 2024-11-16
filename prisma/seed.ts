@@ -3,19 +3,20 @@ import { config } from 'dotenv';
 import { join } from 'path';
 import { IEnvironmentVariables } from '../src/type';
 import { UtilService } from '../src/util/util.service';
+import { BcryptHashing } from '../src/auth/hash/bcrypt.service';
 
 config({ path: join(process.cwd(), '.env.dev') });
 const prisma = new PrismaClient();
-declare global{
-  namespace Nodejs{
-      interface ProcessEnv extends IEnvironmentVariables {}
+declare global {
+  namespace Nodejs {
+    interface ProcessEnv extends IEnvironmentVariables { }
   }
 }
 
 
 
 async function seed() {
-  const util = new UtilService();
+  const util = new BcryptHashing();
 
   const hashPass = await util.hash(process.env.ADMIN_PASSWORD);
 
@@ -24,7 +25,7 @@ async function seed() {
     email: process.env.ADMIN_EMAIL,
     display_name: 'admin',
     password: hashPass,
-    role:"ADMIN"
+    role: "ADMIN"
   };
 
   await prisma.user.create({ data: user });
