@@ -1,28 +1,43 @@
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { UserTokenService } from "./userToken.service";
 import { UtilModule } from "../util/util.module";
 import { PrismaModule } from "../prisma/prisma.module";
-import { JwtModule, JwtService } from "@nestjs/jwt";
-import { CacheModule } from "@nestjs/cache-manager";
-import { AccessTokenService } from "./jwt/refreshToken.service";
-import { RefreshTokenService } from "./jwt/accessToken.service";
+import { JwtModule } from "@nestjs/jwt";
+import { AccessTokenService } from "./jwt/accessToken.service";
+import { RefreshTokenService } from "./jwt/refreshToken.service";
+import { ConfigModule } from "@nestjs/config";
+import accessJwtConfig from "./config/access.jwt.config";
+import refreshJwtConfig from "./config/refresh.jwt.config";
 
 
+@Global()
 @Module({
     imports: [
         PrismaModule,
         UtilModule,
-        JwtModule.register({}),
+        JwtModule.registerAsync(refreshJwtConfig.asProvider()),
+        ConfigModule,
     ],
+
 
     exports: [
         UserTokenService,
+        AccessTokenService,
+        RefreshTokenService
     ],
 
     providers: [
         UserTokenService,
         AccessTokenService,
-        RefreshTokenService
+        RefreshTokenService,
+        {
+            provide: accessJwtConfig.KEY,
+            useValue: accessJwtConfig
+        },
+        {
+            provide: refreshJwtConfig.KEY,
+            useValue: refreshJwtConfig
+        }
     ],
 })
 export class UserTokenModule { }

@@ -7,7 +7,7 @@ import { JwtService } from "@nestjs/jwt";
 import accessJwtConfig from "../config/access.jwt.config";
 
 @Injectable()
-export class RefreshTokenService implements JwtServiceAbstract {
+export class AccessTokenService implements JwtServiceAbstract {
     constructor(
         private readonly jwt: JwtService,
         @Inject(accessJwtConfig.KEY)
