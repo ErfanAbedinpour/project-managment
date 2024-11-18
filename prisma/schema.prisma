@@ -91,13 +91,9 @@ model UserToken {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  userId Int
+  userId Int @unique()
 
   createdAt DateTime @default(now())
-
-  expireAt DateTime
-
-  isRevoke Boolean @default(false)
 }
 
 model ResetPasswordToken {
