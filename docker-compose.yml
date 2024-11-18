@@ -11,19 +11,22 @@ services:
         condition: service_completed_successfully
       psql:
         condition: service_started
-
     ports:
       - '3000:3000'
     networks:
       - app
     volumes:
       - ./src:/app/src
+      - ./prisma:/app/prisma
     develop:
       watch:
         - path: ./package.json
           action: rebuild
         - path: .
           target: src/
+          action: sync
+        - path: .
+          target: prisma/
           action: sync
     command: [ "npm", "run", "start:dev" ]
 
@@ -32,8 +35,6 @@ services:
       context: ./
       dockerfile: Dockerfile
     restart: no
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
     command: [ "npx", "prisma", "migrate", "deploy" ]
     networks:
       - app
@@ -63,7 +64,7 @@ services:
     depends_on:
       - psql
     environment:
-      ADMINER_DEFAULT_SERVER: postgresDb
+      ADMINER_DEFAULT_SERVER: psql
     ports:
       - 8080:8080
     networks:
