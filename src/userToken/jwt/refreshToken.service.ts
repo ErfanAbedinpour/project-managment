@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { AccessTokenPyload, RefreshTokenPayload } from "../dtos/token.dto";
+import { RefreshTokenPayload } from "../dtos/token.dto";
 import { JwtServiceAbstract } from "./jwt.service";
 import { JwtService } from "@nestjs/jwt";
 import refreshJwtConfig from "../config/refresh.jwt.config";
@@ -19,7 +19,7 @@ export class RefreshTokenService implements JwtServiceAbstract {
         })
     }
 
-    verify(token: string): Promise<AccessTokenPyload> {
+    verify(token: string): Promise<RefreshTokenPayload> {
         return this.jwt.verifyAsync(token, {
             secret: this.configuration.secret,
         })

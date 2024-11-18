@@ -1,61 +1,56 @@
-import {  Injectable} from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { ConfigService } from "@nestjs/config";
-import { IEnvironmentVariables } from "../type";
-import { UtilService } from "../util/util.service";
-import { Prisma,  User,  UserToken } from "@prisma/client";
+import { User, UserToken } from "@prisma/client";
+import { AccessTokenService } from "./jwt/accessToken.service";
+import { RefreshTokenService } from "./jwt/refreshToken.service";
 
 
 
 @Injectable()
 export class UserTokenService {
-    constructor(
-        private readonly prisma: PrismaService,
-        private readonly env: ConfigService<IEnvironmentVariables>,
-        private readonly util: UtilService
-    ) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly AccessTokenService: AccessTokenService,
+    private readonly refreshTokenService: RefreshTokenService,
+  ) { }
 
+  async getKeys(user: User): Promise<{ accessToken: string, refreshToken: string }> {
+    try {
+      const [accessToken, refreshToken] = await Promise.all([
+        this.AccessTokenService.sign({ email: user.email, id: user.id, role: user.role, username: user.username }),
+        this.refreshTokenService.sign({ id: user.id })
+      ])
+      return { accessToken, refreshToken }
+    } catch (err) {
+      console.error(err)
+      throw new InternalServerErrorException()
+    }
+  }
+  async create(params: { userId: number, token: string }): Promise<UserToken> {
+    const { token, userId } = params;
+    return this.prisma.userToken.upsert({
+      where: { userId },
 
-    async getUserByToken(token:string,
-  ): Promise<Prisma.UserTokenGetPayload<{include:{user:{select:{username:true,role:true,id:true}}}}>| null> {
-    return this.prisma.userToken.findFirst({
-      where: {token,isRevoke:false},
-      include:{
-        user:{
-          select:{
-            username:true,
-            role:true,
-            id:true
-          }
-        }
+      update: { token: token },
+
+      create: {
+        token: token,
+        userId,
       }
-    });
+    })
   }
 
-  create(data: {token:string;userId:number}):Promise<UserToken> {
-    const expireTime = this.util.dayToMilisecond(+this.env.getOrThrow("REFRESH_TOKEN_EXPIRE"))
-    return this.prisma.userToken.create({ data: {
-      token:data.token,
-      userId:data.userId,
-      expireAt:new Date(expireTime)
-    }});
+  async isValid(params: { userId: number, token: string }): Promise<boolean> {
+    const { token, userId } = params;
+    const { token: tokenStore } = await this.prisma.userToken.findFirst({ where: { userId: userId } })
+    return token === tokenStore;
   }
 
-
-  async updateToken(params: {
-    where: Prisma.UserTokenWhereInput;
-    data: Prisma.UserTokenUpdateInput;
-  }): Promise<Prisma.BatchPayload> {
-    const { where, data } = params;
-    return this.prisma.userToken.updateMany({
-      data,
-      where,
-    });
+  async invalidate(userId: number): Promise<void> {
+    return this.deleteToken(userId);
   }
 
-  deleteToken(where: Prisma.UserTokenWhereInput): Promise<Prisma.BatchPayload> {
-    return this.prisma.userToken.deleteMany({
-      where,
-    });
+  private async deleteToken(userId: number): Promise<void> {
+    await this.prisma.userToken.delete({ where: { userId } });
   }
 }
