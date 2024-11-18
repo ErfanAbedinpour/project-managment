@@ -1,10 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { AccessTokenPyload } from "../dtos/token.dto";
 import { JwtServiceAbstract } from "./jwt.service";
-import refreshJwtConfig from "../config/refresh.jwt.config";
 import { ConfigType } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import accessJwtConfig from "../config/access.jwt.config";
+import { CurentUser } from "../../auth/interface/curent-user.interface";
 
 @Injectable()
 export class AccessTokenService implements JwtServiceAbstract {
@@ -14,14 +13,14 @@ export class AccessTokenService implements JwtServiceAbstract {
         private readonly configuration: ConfigType<typeof accessJwtConfig>
     ) { }
 
-    sign(payload: AccessTokenPyload): Promise<string> {
+    sign(payload: CurentUser): Promise<string> {
         return this.jwt.signAsync(payload, {
             secret: this.configuration.secret,
             expiresIn: this.configuration.expireIn
         })
 
     }
-    verify(token: string): Promise<AccessTokenPyload> {
+    verify(token: string): Promise<CurentUser> {
         return this.jwt.verify(token, {
             secret: this.configuration.secret
         })
