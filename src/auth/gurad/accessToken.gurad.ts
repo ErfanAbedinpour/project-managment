@@ -14,9 +14,9 @@ export class AccessTokenGurad implements CanActivate {
 
         try {
             const payload = await this.accessTokenService.verify(token);
-            console.log(payload)
+
         } catch (err) {
-            throw new UnauthorizedException(err.message)
+            throw new UnauthorizedException(err)
         }
         return true
     }

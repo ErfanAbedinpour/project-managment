@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, Res, } from "@nestjs/common";
+import { Body, Controller, Inject, Post, Res, UseGuards, } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { LoginResponseDTO } from "./dtos/auth.response.dto";
 import { ResponseSerializer } from "../interceptor/response.interceptor";
@@ -7,9 +7,13 @@ import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
 import { CreateUserDTO } from "./dtos/create-user-dto";
 import { LoginUserDTO } from "./dtos/auth.login.dto";
+import { Auth, AuthStrategy } from "./gurad/auth.decorator";
+import { AuthGurad } from "./gurad/auth.gurad";
 
 
 @Controller('auth')
+@UseGuards(AuthGurad)
+@Auth(AuthStrategy.None)
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
@@ -18,12 +22,13 @@ export class AuthController {
     @Post("singup")
     register(@Body() body: CreateUserDTO) {
         return this.authService.register(body)
-
     }
+
     @ResponseSerializer(LoginResponseDTO)
     @Post('login')
     async login(@Body() body: LoginUserDTO, @Res({ passthrough: true }) res: Response) {
         try {
+            console.log('manam')
             const { accessToken, refreshToken } = await this.authService.login(body);
 
             // store accessToken and refreshToken into cookie

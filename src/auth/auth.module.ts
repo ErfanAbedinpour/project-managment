@@ -6,14 +6,24 @@ import { UtilModule } from '../util/util.module';
 import { BcryptHashing } from './hash/bcrypt.service';
 import { HashingService } from './hash/hash.service';
 import { PrismaModule } from '../prisma/prisma.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGurad } from './gurad/auth.gurad';
+import { AccessTokenGurad } from './gurad/accessToken.gurad';
 
 
 @Module({
     imports: [UserModule, UtilModule, PrismaModule],
     controllers: [AuthController],
-    providers: [AuthService, {
-        provide: HashingService,
-        useClass: BcryptHashing
-    }]
+    providers: [AuthService,
+        {
+            provide: HashingService,
+            useClass: BcryptHashing
+        },
+        {
+            provide: APP_GUARD,
+            useClass: AuthGurad
+        },
+        AccessTokenGurad
+    ]
 })
 export class AuthModule { }
