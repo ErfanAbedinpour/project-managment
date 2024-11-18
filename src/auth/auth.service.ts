@@ -57,6 +57,7 @@ export class AuthService {
 
             // generate tokens
             const accessToken = await this.accessTokenService.sign({
+                email: user.email,
                 username: user.username,
                 role: user.role,
                 id: user.id

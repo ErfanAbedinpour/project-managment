@@ -7,7 +7,7 @@ import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
 import { CreateUserDTO } from "./dtos/create-user-dto";
 import { LoginUserDTO } from "./dtos/auth.login.dto";
-import { Auth, AuthStrategy } from "./gurad/auth.decorator";
+import { Auth, AuthStrategy } from "./decorator/auth.decorator";
 import { AuthGurad } from "./gurad/auth.gurad";
 
 
@@ -28,9 +28,7 @@ export class AuthController {
     @Post('login')
     async login(@Body() body: LoginUserDTO, @Res({ passthrough: true }) res: Response) {
         try {
-            console.log('manam')
             const { accessToken, refreshToken } = await this.authService.login(body);
-
             // store accessToken and refreshToken into cookie
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
@@ -48,7 +46,7 @@ export class AuthController {
     }
 
     // @Post('logout')
-    // @UseGuards(TokenGuard)
+    // @Auth(AuthStrategy.Bearer)
     // async logout(@Res({ passthrough: true }) res: Response) {
     //     try {
     //         const result = await this.authService.logOut(userTokens.refreshToken);
