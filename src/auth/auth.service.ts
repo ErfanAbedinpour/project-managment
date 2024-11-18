@@ -1,10 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException, } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { UserTokenService } from "../userToken/userToken.service";
 import { HashingService } from "./hash/hash.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateUserDTO } from "./dtos/create-user-dto";
 import { LoginUserDTO } from "./dtos/auth.login.dto";
-import { AccessTokenService } from "../userToken/jwt/accessToken.service";
 import { RefreshTokenService } from "../userToken/jwt/refreshToken.service";
 
 
@@ -13,7 +12,6 @@ export class AuthService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly userTokenService: UserTokenService,
-        private readonly accessTokenService: AccessTokenService,
         private readonly refreshTokenService: RefreshTokenService,
         private readonly hashingService: HashingService
     ) { }
@@ -55,17 +53,8 @@ export class AuthService {
             if (!(await this.hashingService.compare(password, user.password)))
                 throw new BadRequestException("identify or password are incorrect")
 
-            // generate tokens
-            const accessToken = await this.accessTokenService.sign({
-                email: user.email,
-                username: user.username,
-                role: user.role,
-                id: user.id
-            })
 
-            const refreshToken = await this.refreshTokenService.sign({
-                id: user.id,
-            })
+            const { accessToken, refreshToken } = await this.userTokenService.getKeys(user);
 
             await this.userTokenService.create({ token: refreshToken, userId: user.id });
 
@@ -79,13 +68,34 @@ export class AuthService {
     }
 
 
-    async logOut(refreshToken: string): Promise<{ success: boolean }> {
+    async logOut(userId: number): Promise<{ success: boolean }> {
         try {
-            await this.userTokenService.deleteToken({ token: refreshToken });
+            await this.userTokenService.invalidate(userId);
             return { success: true }
         } catch (err) {
             console.error('error during logOut ', err)
         }
     }
 
+    async refreshToken(refreshToken: string): Promise<{ accessToken: string, refreshToken: string }> {
+        try {
+            const { id } = await this.refreshTokenService.verify(refreshToken);
+            const user = await this.prisma.user.findFirst({ where: { id } });
+            if (!user)
+                throw new Error()
+
+            const isValid = await this.userTokenService.isValid({ userId: user.id, token: refreshToken })
+            if (isValid)
+                await this.userTokenService.invalidate(user.id)
+            else
+                throw new Error()
+
+            const { accessToken, refreshToken: newRefreshToken } = await this.userTokenService.getKeys(user);
+            await this.userTokenService.create({ userId: user.id, token: refreshToken });
+            return { accessToken, refreshToken: newRefreshToken }
+        } catch (err) {
+            throw new UnauthorizedException()
+        }
+
+    }
 }
