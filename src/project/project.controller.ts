@@ -1,16 +1,15 @@
 import { BadGatewayException, BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ProjectDTO, UpdateProjectDTO } from './dtos/projects.dto';
-import { AccessTokenPyload } from '../userToken/dtos/token.dto';
 import { ProjectService } from './project.service';
-import { CurentUser } from '../user/user.decorator';
-
 import { Project } from '@prisma/client';
+import { GetUser } from '../auth/decorator/curent-user.decorator';
+import { CurentUser } from '../auth/interface/curent-user.interface';
 
 @Controller('project')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) { }
   @Post()
-  createProject(@Body() body: ProjectDTO, @CurentUser() me: AccessTokenPyload) {
+  createProject(@Body() body: ProjectDTO, @GetUser() me: CurentUser) {
     try {
       return this.projectService.create(body, me.id);
     } catch (err) {
@@ -20,12 +19,12 @@ export class ProjectController {
 
   //Get user Repository
   @Get("/:username")
-  getUserRepository(@Param("username") username: string, @Query("page", ParseIntPipe) page: number, @CurentUser() me: AccessTokenPyload) {
+  getUserRepository(@Param("username") username: string, @Query("page", ParseIntPipe) page: number, @GetUser() me: CurentUser) {
     return this.projectService.getUserRepositoryByUsername({ username: username, page: page || 1, isAccessToPublic: me?.username === username },)
   }
 
   @Get("/:username/:name")
-  async getProjectByName(@Param("name") name: string, @Param("username") username: string, @CurentUser() me: AccessTokenPyload) {
+  async getProjectByName(@Param("name") name: string, @Param("username") username: string, @GetUser() me: CurentUser) {
     try {
       const project = await this.projectService.getProjectByName({ name, username, isAccessToPrivate: me?.username === username });
 
@@ -41,12 +40,12 @@ export class ProjectController {
   }
 
   @Patch("/:id")
-  updateProject(@Param("id", ParseIntPipe) id: number, @Body() body: UpdateProjectDTO, @CurentUser() me: AccessTokenPyload) {
+  updateProject(@Param("id", ParseIntPipe) id: number, @Body() body: UpdateProjectDTO, @GetUser() me: CurentUser) {
     return this.projectService.updateProject({ data: body, projectId: id, username: me.username });
   }
 
   @Delete("/:id")
-  deleteProject(@Param("id", ParseIntPipe) id: number, @CurentUser() me: AccessTokenPyload) {
+  deleteProject(@Param("id", ParseIntPipe) id: number, @GetUser() me: CurentUser) {
     return this.projectService.deleteProject(id, me.username);
   }
 }
