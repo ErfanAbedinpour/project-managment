@@ -40,7 +40,7 @@ export class UserServices {
         }
       })
       //remove user Token
-      await this.userToken.deleteToken({ userId: id });
+      await this.userToken.invalidate(newUser.id);
 
       return newUser;
     } catch (err) {
