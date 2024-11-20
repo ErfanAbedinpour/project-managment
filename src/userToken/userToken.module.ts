@@ -15,8 +15,10 @@ import refreshJwtConfig from "./config/refresh.jwt.config";
     imports: [
         PrismaModule,
         UtilModule,
-        JwtModule.registerAsync(refreshJwtConfig.asProvider()),
-        ConfigModule,
+        JwtModule.register({}),
+        ConfigModule.forRoot({
+            load: [refreshJwtConfig, accessJwtConfig]
+        }),
     ],
 
 
@@ -30,14 +32,6 @@ import refreshJwtConfig from "./config/refresh.jwt.config";
         UserTokenService,
         AccessTokenService,
         RefreshTokenService,
-        {
-            provide: accessJwtConfig.KEY,
-            useValue: accessJwtConfig
-        },
-        {
-            provide: refreshJwtConfig.KEY,
-            useValue: refreshJwtConfig
-        }
     ],
 })
 export class UserTokenModule { }
