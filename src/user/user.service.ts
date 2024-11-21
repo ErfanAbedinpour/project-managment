@@ -32,6 +32,7 @@ export class UserServices {
         },
         data: data,
         select: {
+          UserToken: { select: { token: true } },
           id: true,
           email: true,
           username: true,
@@ -39,8 +40,10 @@ export class UserServices {
           profile: true
         }
       })
-      //remove user Token
-      await this.userToken.invalidate(newUser.id);
+      //remove user Tokens
+      for (const record of newUser.UserToken) {
+        await this.userToken.invalidate(record.token)
+      }
 
       return newUser;
     } catch (err) {

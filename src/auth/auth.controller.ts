@@ -61,7 +61,14 @@ export class AuthController {
 
     @Post("/token")
     @HttpCode(HttpStatus.OK)
-    refreshToken(@Body() body: RefreshTokenDto) {
-        return this.authService.refreshToken(body.refreshToken);
+    async refreshToken(@Body() body: RefreshTokenDto, @Res({ passthrough: true }) response: Response) {
+        try {
+            const { accessToken, refreshToken } = await this.authService.refreshToken(body.refreshToken);
+            response.cookie("accessToken", accessToken)
+            response.cookie("refreshToken", refreshToken)
+            return { accessToken, refreshToken }
+        } catch (err) {
+            throw err
+        }
     }
 }
