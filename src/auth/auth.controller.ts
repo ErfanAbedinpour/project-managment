@@ -1,4 +1,4 @@
-import { Body, Controller, ForbiddenException, HttpCode, HttpStatus, Inject, Post, Res, UseGuards, } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, HttpCode, HttpStatus, Post, Res, } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { LoginResponseDTO } from "./dtos/auth.response.dto";
 import { ResponseSerializer } from "../interceptor/response.interceptor";
@@ -7,8 +7,6 @@ import { CreateUserDTO } from "./dtos/create-user-dto";
 import { LoginUserDTO } from "./dtos/auth.login.dto";
 import { Auth, AuthStrategy } from "./decorator/auth.decorator";
 import { RefreshTokenDto } from "./dtos/refreshToken.dto";
-import { GetUser } from "./decorator/curent-user.decorator";
-import { CurentUser } from "./interface/curent-user.interface";
 
 
 @Controller('auth')
