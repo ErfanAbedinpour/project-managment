@@ -1,20 +1,20 @@
-import { BadRequestException, Body, Controller, Delete, Get, Inject, Patch, Post, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch, Res, UnauthorizedException } from "@nestjs/common";
 import { Response } from 'express';
-import { UserTokenParam } from "../userToken/dtos/token.dto";
 import { UserServices } from "./user.service";
 import { UserResponseDTO, UserUpdatedBodyDTO, VerifyCodeDTO } from "./dtos/user.dto";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { ResponseSerializer } from "../interceptor/response.interceptor";
-import { Cache } from "cache-manager";
-import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { GetUser } from "../auth/decorator/curent-user.decorator";
 import { CurentUser } from "../auth/interface/curent-user.interface";
+import { ROLE } from "../auth/enums/role.enum";
+import { Role } from "../auth/decorator/role.decorator";
+import { UserDTO } from "../auth/dtos/auth.dto";
+import { DeleteUserDto } from "./dtos/delete.user.dto";
 
 @Controller('/user')
 export class UserController {
   constructor(
     private readonly userService: UserServices,
-    @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {
   }
 
@@ -26,12 +26,12 @@ export class UserController {
   // update user
   @Patch()
   @ResponseSerializer(UserResponseDTO)
-  async updateUser(
+  async updateMe(
     @GetUser() user: CurentUser,
     @Body() body: UserUpdatedBodyDTO,
     @Res({ passthrough: true }) res: Response,) {
     try {
-      const newUser = await this.userService.updateUser({ id: user.id, data: body });
+      const newUser = await this.userService.updateMe({ id: user.id, data: body });
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
       return newUser;
@@ -53,7 +53,7 @@ export class UserController {
   }
 
   @Delete()
-  deleteUser(@GetUser() me: CurentUser) {
+  deleteMe(@GetUser() me: CurentUser) {
     return this.userService.deleteAccount(me.id);
   }
 
@@ -70,4 +70,10 @@ export class UserController {
 
   }
 
+  @Role(ROLE.SUPER_USER)
+  @ResponseSerializer(DeleteUserDto)
+  @Delete("/:id")
+  deleteUser(@Param("id", ParseIntPipe) id: number) {
+    return this.userService.deleteUser(id)
+  }
 }

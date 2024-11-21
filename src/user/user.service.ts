@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, HttpException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, HttpException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -8,6 +8,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { UserTokenService } from '../userToken/userToken.service';
 import { UserDTO } from '../auth/dtos/auth.dto';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class UserServices {
@@ -23,7 +24,7 @@ export class UserServices {
     return this.prisma.user.findFirst({ where: { id } });
   }
 
-  async updateUser(params: { id: number, data: Prisma.UserUpdateInput }): Promise<Omit<UserDTO, 'password'>> {
+  async updateMe(params: { id: number, data: Prisma.UserUpdateInput }): Promise<Omit<UserDTO, 'password'>> {
     const { id, data } = params;
     try {
       const newUser = await this.prisma.user.update({
@@ -51,9 +52,9 @@ export class UserServices {
     }
   }
 
-  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
+  private async deleteUserById(userId: number): Promise<User> {
     return this.prisma.user.delete({
-      where,
+      where: { id: userId },
     });
   }
 
@@ -93,19 +94,7 @@ export class UserServices {
         throw new ForbiddenException("code in wrong. ");
 
 
-      const user = await this.prisma.user.delete({
-        where: {
-          id: userId,
-        },
-        select: {
-          id: true,
-          username: true,
-          role: true,
-          email: true,
-          profile: true,
-          display_name: true
-        }
-      })
+      const user = await this.deleteUserById(userId)
       //remove code from cache
       await this.cache.del(userId.toString());
       return { success: true, user: user }
@@ -113,4 +102,17 @@ export class UserServices {
       throw err
     }
   }
+
+  async deleteUser(userId: number) {
+    const isUserExsist = await this.prisma.user.findFirst({ where: { id: userId } })
+    if (!isUserExsist)
+      throw new NotFoundException('user does not exsist')
+    try {
+      return await this.deleteUserById(userId)
+    } catch (err) {
+      console.error(err)
+      throw new InternalServerErrorException(err.message)
+    }
+  }
+
 }

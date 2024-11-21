@@ -6,6 +6,8 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      - DATABASE_URL=${DOCKER_DATABASE_URL}
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -35,6 +37,10 @@ services:
       context: ./
       dockerfile: Dockerfile
     restart: no
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DOCKER_DATABASE_URL}
     command: [ "npx", "prisma", "migrate", "deploy" ]
     networks:
       - app
@@ -45,6 +51,7 @@ services:
   psql:
     image: postgres
     restart: always
+
     environment:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_USER=${DB_USER}

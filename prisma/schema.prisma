@@ -125,4 +125,5 @@ enum ProjectStatus {
 enum Role {
   USER
   ADMIN
+  SUPER_USER
 }
