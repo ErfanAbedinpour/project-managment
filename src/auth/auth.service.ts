@@ -56,8 +56,6 @@ export class AuthService {
 
             const { accessToken, refreshToken } = await this.userTokenService.getKeys(user);
 
-            await this.userTokenService.create({ token: refreshToken, userId: user.id });
-
             return {
                 accessToken,
                 refreshToken
@@ -90,7 +88,6 @@ export class AuthService {
 
             await this.userTokenService.invalidate(refreshToken)
             const { accessToken, refreshToken: newRefreshToken } = await this.userTokenService.getKeys(user);
-            await this.userTokenService.create({ userId: user.id, token: newRefreshToken });
             return { accessToken, refreshToken: newRefreshToken }
         } catch (err) {
             throw new UnauthorizedException()

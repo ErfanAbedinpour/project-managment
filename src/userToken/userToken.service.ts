@@ -20,6 +20,7 @@ export class UserTokenService {
         this.AccessTokenService.sign({ email: user.email, id: user.id, role: user.role, username: user.username }),
         this.refreshTokenService.sign({ id: user.id })
       ])
+      await this.create({ userId: user.id, token: refreshToken });
       return { accessToken, refreshToken }
     } catch (err) {
       console.error(err)
