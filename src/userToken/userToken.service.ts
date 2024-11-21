@@ -28,12 +28,8 @@ export class UserTokenService {
   }
   async create(params: { userId: number, token: string }): Promise<UserToken> {
     const { token, userId } = params;
-    return this.prisma.userToken.upsert({
-      where: { userId },
-
-      update: { token: token },
-
-      create: {
+    return this.prisma.userToken.create({
+      data: {
         token: token,
         userId,
       }
@@ -42,15 +38,15 @@ export class UserTokenService {
 
   async isValid(params: { userId: number, token: string }): Promise<boolean> {
     const { token, userId } = params;
-    const { token: tokenStore } = await this.prisma.userToken.findFirst({ where: { userId: userId } })
-    return token === tokenStore;
+    const { token: tokenStore, userId: userIdStore } = await this.prisma.userToken.findFirst({ where: { token } })
+    return token === tokenStore && userId === userIdStore;
   }
 
-  async invalidate(userId: number): Promise<void> {
-    return this.deleteToken(userId);
+  async invalidate(token: string): Promise<void> {
+    return this.deleteToken(token);
   }
 
-  private async deleteToken(userId: number): Promise<void> {
-    await this.prisma.userToken.delete({ where: { userId } });
+  private async deleteToken(token: string): Promise<void> {
+    await this.prisma.userToken.delete({ where: { token } });
   }
 }

@@ -68,9 +68,9 @@ export class AuthService {
     }
 
 
-    async logOut(userId: number): Promise<{ success: boolean }> {
+    async logOut(token: string): Promise<{ success: boolean }> {
         try {
-            await this.userTokenService.invalidate(userId);
+            await this.userTokenService.invalidate(token);
             return { success: true }
         } catch (err) {
             console.error('error during logOut ', err)
@@ -85,11 +85,10 @@ export class AuthService {
                 throw new Error()
 
             const isValid = await this.userTokenService.isValid({ userId: user.id, token: refreshToken })
-            if (isValid)
-                await this.userTokenService.invalidate(user.id)
-            else
+            if (!isValid)
                 throw new Error()
 
+            await this.userTokenService.invalidate(refreshToken)
             const { accessToken, refreshToken: newRefreshToken } = await this.userTokenService.getKeys(user);
             await this.userTokenService.create({ userId: user.id, token: refreshToken });
             return { accessToken, refreshToken: newRefreshToken }

@@ -1,23 +1,21 @@
-import { Body, Controller, Inject, Post, Res, UseGuards, } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, HttpCode, HttpStatus, Inject, Post, Res, UseGuards, } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { LoginResponseDTO } from "./dtos/auth.response.dto";
 import { ResponseSerializer } from "../interceptor/response.interceptor";
 import { Response } from "express";
-import { CACHE_MANAGER } from "@nestjs/cache-manager";
-import { Cache } from "cache-manager";
 import { CreateUserDTO } from "./dtos/create-user-dto";
 import { LoginUserDTO } from "./dtos/auth.login.dto";
 import { Auth, AuthStrategy } from "./decorator/auth.decorator";
-import { AuthGurad } from "./gurad/auth.gurad";
+import { RefreshTokenDto } from "./dtos/refreshToken.dto";
+import { GetUser } from "./decorator/curent-user.decorator";
+import { CurentUser } from "./interface/curent-user.interface";
 
 
 @Controller('auth')
-@UseGuards(AuthGurad)
 @Auth(AuthStrategy.None)
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
-        @Inject(CACHE_MANAGER) private readonly cache: Cache
     ) { }
     @Post("singup")
     register(@Body() body: CreateUserDTO) {
@@ -25,6 +23,7 @@ export class AuthController {
     }
 
     @ResponseSerializer(LoginResponseDTO)
+    @HttpCode(HttpStatus.OK)
     @Post('login')
     async login(@Body() body: LoginUserDTO, @Res({ passthrough: true }) res: Response) {
         try {
@@ -45,24 +44,26 @@ export class AuthController {
         }
     }
 
-    // @Post('logout')
-    // @Auth(AuthStrategy.Bearer)
-    // async logout(@Res({ passthrough: true }) res: Response) {
-    //     try {
-    //         const result = await this.authService.logOut(userTokens.refreshToken);
-    //         if (!result.success)
-    //             throw new ForbiddenException("unknown error. ");
+    @Post('logout')
+    @HttpCode(HttpStatus.OK)
+    @Auth(AuthStrategy.Bearer)
+    async logout(@Body() body: RefreshTokenDto, @Res({ passthrough: true }) res: Response) {
+        try {
+            const result = await this.authService.logOut(body.refreshToken);
+            if (!result.success)
+                throw new ForbiddenException("unknown error. ");
 
-    //         const { accessToken } = userTokens;
-    //         if (accessToken)
-    //             // set accessToken into BlackList
-    //             await this.cache.set(btoa(accessToken), accessToken);
+            res.clearCookie("accessToken");
+            res.clearCookie("refreshToken");
+            return result
+        } catch (err) {
+            throw err;
+        }
+    }
 
-    //         res.clearCookie("accessToken");
-    //         res.clearCookie("refreshToken");
-    //         return result
-    //     } catch (err) {
-    //         throw err;
-    //     }
-    // }
+    @Post("/token")
+    @HttpCode(HttpStatus.OK)
+    refreshToken(@Body() body: RefreshTokenDto) {
+        return this.authService.refreshToken(body.refreshToken);
+    }
 }
