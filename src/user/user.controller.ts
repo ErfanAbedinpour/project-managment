@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch, Res, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Patch, Res, UnauthorizedException } from "@nestjs/common";
 import { Response } from 'express';
 import { UserServices } from "./user.service";
 import { UserResponseDTO, UserUpdatedBodyDTO, VerifyCodeDTO } from "./dtos/user.dto";
@@ -6,10 +6,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { ResponseSerializer } from "../interceptor/response.interceptor";
 import { GetUser } from "../auth/decorator/curent-user.decorator";
 import { CurentUser } from "../auth/interface/curent-user.interface";
-import { ROLE } from "../auth/enums/role.enum";
-import { Role } from "../auth/decorator/role.decorator";
 import { UserDTO } from "../auth/dtos/auth.dto";
-import { DeleteUserDto } from "./dtos/delete.user.dto";
 
 @Controller('/user')
 export class UserController {
@@ -68,12 +65,5 @@ export class UserController {
       throw err;
     }
 
-  }
-
-  @Role(ROLE.SUPER_USER)
-  @ResponseSerializer(DeleteUserDto)
-  @Delete("/:id")
-  deleteUser(@Param("id", ParseIntPipe) id: number) {
-    return this.userService.deleteUser(id)
   }
 }

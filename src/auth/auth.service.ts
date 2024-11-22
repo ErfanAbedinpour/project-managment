@@ -5,6 +5,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreateUserDTO } from "./dtos/create-user-dto";
 import { LoginUserDTO } from "./dtos/auth.login.dto";
 import { RefreshTokenService } from "../userToken/jwt/refreshToken.service";
+import { CreateUserResponse, LogOutResponse } from "./dtos/auth.response.dto";
 
 
 @Injectable()
@@ -16,7 +17,7 @@ export class AuthService {
         private readonly hashingService: HashingService
     ) { }
 
-    async register(user: CreateUserDTO): Promise<{ success: boolean }> {
+    async register(user: CreateUserDTO): Promise<CreateUserResponse> {
         try {
             const isEmailTaken = await this.prisma.user.findFirst({ where: { email: user.email } });
             if (isEmailTaken)
@@ -66,7 +67,7 @@ export class AuthService {
     }
 
 
-    async logOut(token: string): Promise<{ success: boolean }> {
+    async logOut(token: string): Promise<LogOutResponse> {
         try {
             await this.userTokenService.invalidate(token);
             return { success: true }
