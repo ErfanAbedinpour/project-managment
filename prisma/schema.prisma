@@ -91,7 +91,7 @@ model UserToken {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  userId Int @unique()
+  userId Int
 
   createdAt DateTime @default(now())
 }
