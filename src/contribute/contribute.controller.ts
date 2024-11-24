@@ -10,10 +10,10 @@ import { CurentUser } from "../auth/interface/curent-user.interface";
 export class ContributeController {
     constructor(private readonly service: ContributeService) { }
 
-    @Post()
-    joinedToProejct(@Param() param: ContributeParam, @GetUser() me: CurentUser) {
-        return this.service.contributeToNewProject({ projectName: param.projectName, userId: me.id, username: param.username });
-    }
+    // @Post()
+    // joinedToProejct(@Param() param: ContributeParam, @GetUser() me: CurentUser) {
+    //     return this.service.contributeToNewProject({ projectName: param.projectName, userId: me.id, username: param.username });
+    // }
 
     @Delete()
     leftFromProject() { }
