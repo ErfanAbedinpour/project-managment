@@ -18,15 +18,14 @@ export class AuthService {
     ) { }
 
     async register(user: CreateUserDTO): Promise<CreateUserResponse> {
+        const isEmailTaken = await this.prisma.user.findFirst({ where: { email: user.email } });
+        if (isEmailTaken)
+            throw new BadRequestException('email already taken.');
+
+        const isValidUserNmae = await this.prisma.user.findFirst({ where: { username: user.username } });
+        if (isValidUserNmae)
+            throw new BadRequestException("username already taken.");
         try {
-            const isEmailTaken = await this.prisma.user.findFirst({ where: { email: user.email } });
-            if (isEmailTaken)
-                throw new BadRequestException('email already taken.');
-
-            const isValidUserNmae = await this.prisma.user.findFirst({ where: { username: user.username } });
-            if (isValidUserNmae)
-                throw new BadRequestException("username already taken.");
-
             const hashPassword = await this.hashingService.hash(user.password);
 
             await this.prisma.user.create({
@@ -44,13 +43,11 @@ export class AuthService {
     }
 
     async login({ identify, password }: LoginUserDTO): Promise<{ accessToken: string; refreshToken: string }> {
+        const user = await this.prisma.user.findFirst({ where: { OR: [{ email: identify }, { username: identify }] } });
+
+        if (!user)
+            throw new NotFoundException("user does not found")
         try {
-            const user = await this.prisma.user.findFirst({ where: { OR: [{ email: identify }, { username: identify }] } });
-
-            if (!user)
-                throw new NotFoundException("user does not found")
-
-
             if (!(await this.hashingService.compare(password, user.password)))
                 throw new BadRequestException("identify or password are incorrect")
 
