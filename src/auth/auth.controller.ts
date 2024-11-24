@@ -7,7 +7,7 @@ import { CreateUserDTO } from "./dtos/create-user-dto";
 import { LoginUserDTO } from "./dtos/auth.login.dto";
 import { Auth, AuthStrategy } from "./decorator/auth.decorator";
 import { RefreshTokenDto } from "./dtos/refreshToken.dto";
-import { ApiAcceptedResponse, ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiForbiddenResponse, ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiUnauthorizedResponse } from "@nestjs/swagger";
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiForbiddenResponse, ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiUnauthorizedResponse } from "@nestjs/swagger";
 
 
 @Controller('auth')
@@ -51,9 +51,16 @@ export class AuthController {
         }
     }
 
+
     @ApiBody({ type: RefreshTokenDto })
     @ApiForbiddenResponse({ description: "Unknown Error" })
     @ApiOkResponse({ description: "user logout succesfully", type: LogOutResponse })
+    @ApiHeader({
+        name: "Autorization Bearer",
+        description: "authorize user with",
+        required: true,
+    })
+    @ApiBearerAuth()
     @Post('logout')
     @HttpCode(HttpStatus.OK)
     @Auth(AuthStrategy.Bearer)
@@ -74,11 +81,6 @@ export class AuthController {
     @ApiBody({ type: RefreshTokenDto })
     @ApiOkResponse({ description: "generate new accessToken and refreshToken", type: RefreshTokenResponse })
     @ApiUnauthorizedResponse({ description: "refreshToken invalid or expired" })
-    @ApiHeader({
-        name: "Autorization Bearer",
-        description: "authorize user with",
-        required: true,
-    })
     @Post("/token")
     @HttpCode(HttpStatus.OK)
     async refreshToken(@Body() body: RefreshTokenDto, @Res({ passthrough: true }) response: Response): Promise<RefreshTokenResponse> {
