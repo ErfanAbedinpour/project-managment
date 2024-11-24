@@ -147,6 +147,8 @@ The `Activity` table logs all significant actions performed within the project, 
 
 - **POST /api/auth/register**: Register a new user.  
 - **POST /api/auth/login**: User login.
+- **POST /api/auth/logout**: logout User
+- **POST /api/auth/token**: generate new tokens
 
 ### User Routes
 
@@ -157,10 +159,10 @@ The `Activity` table logs all significant actions performed within the project, 
 ### Project Routes
 
 - **POST /api/projects**: Create a new project.
-- **GET /api/projects**: Get a list of public projects or the logged-in user’s private projects.
-- **GET /api/projects/:id**: Get details of a specific project.
-- **PATCH /api/projects/:id**: Update a specific project (owner only).
-- **DELETE /api/projects/:id**: Delete a specific project (owner only).
+- **GET /api/projects/:username**: Get a list of public projects or the logged-in user’s private projects.
+- **GET /api/projects/:username/:projectName**: Get details of a specific project.
+- **PATCH /api/projects/:projectName**: Update a specific project (owner only).
+- **DELETE /api/projects/:projectNaem**: Delete a specific project (owner only).
 
 ### Contributor Routes
 

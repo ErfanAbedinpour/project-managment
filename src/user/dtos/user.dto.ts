@@ -1,7 +1,5 @@
 import { Exclude, Expose } from "class-transformer";
 import { IsEmail, IsNotEmpty, isNotEmpty, IsNumber, IsOptional, IsString, MaxLength, MinLength, Validate, ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
-import { ROLE } from "../../auth/enums/role.enum";
-import { CreateUserDTO } from "../../auth/dtos/create-user-dto";
 
 
 

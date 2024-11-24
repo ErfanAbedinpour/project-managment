@@ -1,51 +1,62 @@
-import { BadGatewayException, BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ProjectDTO, UpdateProjectDTO } from './dtos/projects.dto';
+import { Body, Controller, Delete, Get, HttpException, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { UpdateProjectDTO } from './dtos/projects-update.dto';
 import { ProjectService } from './project.service';
 import { Project } from '@prisma/client';
 import { GetUser } from '../auth/decorator/curent-user.decorator';
-import { CurentUser } from '../auth/interface/curent-user.interface';
+import { Auth, AuthStrategy } from '../auth/decorator/auth.decorator';
+import { ProjectDTO } from './dtos/project.dto';
 
-@Controller('project')
+
+@Controller('projects')
 export class ProjectController {
+  private readonly NOT_ACCESS = "you cannot access this Resource."
   constructor(private readonly projectService: ProjectService) { }
+
   @Post()
-  createProject(@Body() body: ProjectDTO, @GetUser() me: CurentUser) {
+  createProject(@Body() body: ProjectDTO, @GetUser("id") me: number) {
     try {
-      return this.projectService.create(body, me.id);
+      console.log(me)
+      return this.projectService.create(body, me);
     } catch (err) {
       throw new InternalServerErrorException(err.message);
     }
   }
 
   //Get user Repository
+  @Auth(AuthStrategy.None)
   @Get("/:username")
-  getUserRepository(@Param("username") username: string, @Query("page", ParseIntPipe) page: number, @GetUser() me: CurentUser) {
-    return this.projectService.getUserRepositoryByUsername({ username: username, page: page || 1, isAccessToPublic: me?.username === username },)
+  getUserRepository(@Param('username') username: string, @Query("page", ParseIntPipe) page: number, @GetUser("username") me: string) {
+    return this.projectService.getRepository({ username: username, page: page || 1, isAccessToPublic: me === username },)
   }
 
+  @Auth(AuthStrategy.None)
   @Get("/:username/:name")
-  async getProjectByName(@Param("name") name: string, @Param("username") username: string, @GetUser() me: CurentUser) {
+  async getProjectByName(@Param("name") name: string, @Param("username") username: string, @GetUser("username") me: string) {
     try {
-      const project = await this.projectService.getProjectByName({ name, username, isAccessToPrivate: me?.username === username });
+      const project = await this.projectService.getProjectByName({ name, username: username, isAccessToPrivate: me === username });
 
       if (!project)
-        throw new NotFoundException("project not found");
+        throw new NotFoundException("project not found. ");
 
       return project
 
     } catch (err) {
+      if (err instanceof HttpException)
+        throw err
       console.error(err);
       throw new InternalServerErrorException(err.message)
     }
   }
 
-  @Patch("/:id")
-  updateProject(@Param("id", ParseIntPipe) id: number, @Body() body: UpdateProjectDTO, @GetUser() me: CurentUser) {
-    return this.projectService.updateProject({ data: body, projectId: id, username: me.username });
+
+  @Patch("/:name")
+  updateProject(@Param("name") name: string, @Body() body: UpdateProjectDTO, @GetUser('id') me: number) {
+    return this.projectService.updateProject({ data: body, name, userId: me });
   }
 
-  @Delete("/:id")
-  deleteProject(@Param("id", ParseIntPipe) id: number, @GetUser() me: CurentUser) {
-    return this.projectService.deleteProject(id, me.username);
+  @Delete(":name")
+  async deleteProject(@Param('name') name: string, @GetUser('id') me: number) {
+    return this.projectService.deleteProject(me, name)
+
   }
 }
