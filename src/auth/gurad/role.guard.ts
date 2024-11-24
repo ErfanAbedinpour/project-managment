@@ -7,7 +7,7 @@ import { ROLE } from "../enums/role.enum";
 @Injectable()
 export class RoleGuard implements CanActivate {
     constructor(private readonly reflector: Reflector) { }
-    async canActivate(context: ExecutionContext): Promise<boolean> {
+    canActivate(context: ExecutionContext): boolean {
         const roleContext = this.reflector.getAllAndOverride<ROLE[]>(ROLE_KEY, [context.getHandler(), context.getClass()]);
         console.log('role context is ', roleContext)
         if (!roleContext)

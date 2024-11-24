@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { AUTH_META_KEY, AuthStrategy } from "../decorator/auth.decorator";
 import { AccessTokenGurad } from "./accessToken.guard";
@@ -25,9 +25,9 @@ export class AuthGurad implements CanActivate {
                 if (resolve)
                     return true
             } catch (err) {
-                throw err
+                break;
             }
         }
-        throw new Error();
+        throw new ForbiddenException()
     }
 }
