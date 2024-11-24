@@ -7,5 +7,5 @@ export const GetUser = createParamDecorator((
 ) => {
     const request = context.switchToHttp().getRequest<Request>();
 
-    return filed ? request?.user[filed] : request.user
+    return filed ? request.user?.[filed] : request.user
 })
