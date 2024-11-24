@@ -9,14 +9,15 @@ export class AccessTokenGurad implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest<Request>();
         const token = this.getTokenFromHeader(request);
+
         if (!token)
-            throw new UnauthorizedException()
+            throw new UnauthorizedException("header should be Bearer.")
 
         try {
             const payload = await this.accessTokenService.verify(token);
             request.user = payload
         } catch (err) {
-            throw new UnauthorizedException(err)
+            throw new UnauthorizedException("token is invalid or expired.")
         }
         return true
     }
