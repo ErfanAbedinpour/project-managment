@@ -1,5 +1,5 @@
 import { Test } from "@nestjs/testing";
-import { AccessTokenGurad } from "../gurad/accessToken.gurad"
+import { AccessTokenGurad } from "../gurad/accessToken.guard"
 import { AccessTokenService } from "../../../src/userToken/jwt/accessToken.service";
 import { ExecutionContext, UnauthorizedException } from "@nestjs/common";
 import { UserTokenModule } from "../../userToken/userToken.module";

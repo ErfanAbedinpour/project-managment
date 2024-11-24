@@ -13,10 +13,10 @@ export class AccessTokenService implements JwtServiceAbstract {
         private readonly configuration: ConfigType<typeof accessJwtConfig>
     ) { }
 
-    sign(payload: CurentUser): Promise<string> {
+    sign(payload: CurentUser, expireIn?: number): Promise<string> {
         return this.jwt.signAsync(payload, {
             secret: this.configuration.secret,
-            expiresIn: this.configuration.expireIn
+            expiresIn: expireIn || this.configuration.expireIn
         })
 
     }

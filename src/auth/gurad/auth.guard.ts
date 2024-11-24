@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { AUTH_META_KEY, AuthStrategy } from "../decorator/auth.decorator";
-import { AccessTokenGurad } from "./accessToken.gurad";
+import { AccessTokenGurad } from "./accessToken.guard";
 
 @Injectable()
 export class AuthGurad implements CanActivate {
