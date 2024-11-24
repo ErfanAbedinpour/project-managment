@@ -14,6 +14,7 @@ export class AccessTokenGurad implements CanActivate {
             throw new UnauthorizedException("header should be Bearer.")
 
         try {
+            console.log('token is ', token)
             const payload = await this.accessTokenService.verify(token);
             request.user = payload
         } catch (err) {

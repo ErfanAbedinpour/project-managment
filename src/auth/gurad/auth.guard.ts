@@ -1,33 +1,36 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, ForbiddenException, HttpException, Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { AUTH_META_KEY, AuthStrategy } from "../decorator/auth.decorator";
 import { AccessTokenGurad } from "./accessToken.guard";
+import { Request } from "express";
 
 @Injectable()
 export class AuthGurad implements CanActivate {
-    private readonly authTypeMap: Record<AuthStrategy, CanActivate> = {
-        [AuthStrategy.Bearer]: this.AccessTokenGurad,
-        [AuthStrategy.None]: { canActivate: () => true }
-    }
-    constructor(private readonly reflector: Reflector, private AccessTokenGurad: AccessTokenGurad) { }
 
+    constructor(private readonly reflector: Reflector, private AccessTokenGurad: AccessTokenGurad) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
 
         const meta = this.reflector.getAllAndOverride<AuthStrategy[]>(AUTH_META_KEY, [context.getHandler(), context.getClass()])
             ?? [AuthStrategy.Bearer]
 
-        const gurads = meta.map((type) => this.authTypeMap[type]);
 
-        for (const instance of gurads) {
-            try {
-                const resolve = await instance.canActivate(context)
-                if (resolve)
-                    return true
-            } catch (err) {
-                break;
-            }
+        const isUserSetHeader = !!context.switchToHttp().getRequest<Request>().headers?.authorization || null;
+
+        /*
+            if user not set any header and route is public everything is ok 
+            but if user set header. user must be authorized even if route is public
+         */
+        if (!isUserSetHeader && meta.includes(AuthStrategy.None))
+            return true
+
+        try {
+            await this.AccessTokenGurad.canActivate(context)
+        } catch (err) {
+            if (err instanceof UnauthorizedException)
+                throw err
+            throw new InternalServerErrorException()
         }
-        throw new ForbiddenException()
+        return true
     }
 }
