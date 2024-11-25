@@ -22,6 +22,11 @@
     "seed": "prisma db seed",
     "prepare": "husky"
   },
+  "husky": {
+    "hook": {
+      "pre-commit": "npm run test"
+    }
+  },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.11.2",
     "@nestjs/cache-manager": "^2.3.0",
