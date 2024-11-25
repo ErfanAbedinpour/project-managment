@@ -1,28 +1,27 @@
 import {
   Controller,
-  Delete,
+  Get,
   Param,
-  ParseIntPipe,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { ContributeService } from './contribute.service';
-import { ContributeParam } from './dtos/contribute.dto';
 import { GetUser } from '../auth/decorator/curent-user.decorator';
-import { CurentUser } from '../auth/interface/curent-user.interface';
+import { Auth, AuthStrategy } from '../auth/decorator/auth.decorator';
 
 @Controller('project/:username/:projectName/contribute')
 export class ContributeController {
-  constructor(private readonly service: ContributeService) {}
+  constructor(private readonly service: ContributeService) { }
 
-  // @Post()
-  // joinedToProejct(@Param() param: ContributeParam, @GetUser() me: CurentUser) {
-  //     return this.service.contributeToNewProject({ projectName: param.projectName, userId: me.id, username: param.username });
-  // }
+  @Post()
+  contributeToProject(@Param("username") username: string, @Param("projectName") name: string, @GetUser("id") userId: number) {
+    return this.service.contributeToNewProject({ username, userId, projectName: name });
+  }
 
-  @Delete()
-  leftFromProject() {}
+  @Auth(AuthStrategy.None)
+  @Get()
+  getProjectContributers(@Param("projectName") name: string, @Param("username") username: string, @GetUser('id') me: number) {
+    return this.service.getProjectContributers({ username, projectName: name, userId: me })
+  }
 
-  @Delete(':userId')
-  kickFromProject() {}
+
 }
