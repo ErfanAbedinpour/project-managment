@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -14,12 +15,15 @@ import { CreateUserResponse, LogOutResponse } from './dtos/auth.response.dto';
 
 @Injectable()
 export class AuthService {
+
+  private readonly logger = new Logger(AuthService.name)
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly userTokenService: UserTokenService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly hashingService: HashingService,
-  ) {}
+  ) { }
 
   async register(user: CreateUserDTO): Promise<CreateUserResponse> {
     const isEmailTaken = await this.prisma.user.findFirst({
@@ -45,6 +49,7 @@ export class AuthService {
       });
       return { success: true };
     } catch (err) {
+      this.logger.error(err);
       throw err;
     }
   }
@@ -70,6 +75,7 @@ export class AuthService {
         refreshToken,
       };
     } catch (err) {
+      this.logger.error(err)
       throw err;
     }
   }
@@ -79,7 +85,7 @@ export class AuthService {
       await this.userTokenService.invalidate(token);
       return { success: true };
     } catch (err) {
-      console.error('error during logOut ', err);
+      this.logger.error(err)
     }
   }
 
@@ -102,7 +108,9 @@ export class AuthService {
         await this.userTokenService.getKeys(user);
       return { accessToken, refreshToken: newRefreshToken };
     } catch (err) {
+      this.logger.error(err)
       throw new UnauthorizedException();
+
     }
   }
 }
