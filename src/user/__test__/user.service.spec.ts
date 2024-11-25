@@ -23,38 +23,37 @@ describe('user Service', () => {
     display_name: 'nice',
   };
   const user2 = {
-    id:2,
+    id: 2,
     username: 'user2',
     email: 'email2@gmail.com',
     password: '12341234',
     display_name: 'nice',
   };
   const user3 = {
-    id:3,
+    id: 3,
     username: 'user3',
     email: 'email3@gmail.com',
     password: '12341234',
     display_name: 'nice',
   };
 
-
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
           envFilePath: join(process.cwd(), `.env.test`),
-          isGlobal:true
+          isGlobal: true,
         }),
         PrismaModule,
         MailerModule.forRoot({
-          transport:{
-            host:"gmail",
-            auth:{},
-          }
+          transport: {
+            host: 'gmail',
+            auth: {},
+          },
         }),
         UtilModule,
-        CacheModule.register({isGlobal:true}),
-        UserTokenModule 
+        CacheModule.register({ isGlobal: true }),
+        UserTokenModule,
       ],
       providers: [UserServices],
     }).compile();
@@ -106,8 +105,11 @@ describe('user Service', () => {
   });
 
   it('should be change user2 username to new usename', async () => {
-    const newUser = await userService.updateUser({id:user2.id,data:{username:"newUser2"}});
-    console.log(newUser)
+    const newUser = await userService.updateUser({
+      id: user2.id,
+      data: { username: 'newUser2' },
+    });
+    console.log(newUser);
     //change user2 username to new username
     user2.username = newUser.username;
     // tests

@@ -1,16 +1,11 @@
 import { Exclude, Expose } from 'class-transformer';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsString,
-} from 'class-validator';
-
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class UserDTO {
   //display name
   @Expose()
   @IsNotEmpty()
-  display_name: string
+  display_name: string;
   //email
   @Expose()
   @IsNotEmpty()
@@ -24,13 +19,13 @@ export class UserDTO {
   @Expose()
   @IsNotEmpty()
   @IsString()
-  profile: string
+  profile: string;
   @Exclude()
-  password: string
+  password: string;
 }
 
 export class TokenDTO {
   @IsString()
   @IsNotEmpty()
-  refreshToken: string
+  refreshToken: string;
 }

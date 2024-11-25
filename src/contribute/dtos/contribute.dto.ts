@@ -1,10 +1,10 @@
-import { IsNotEmpty, IsString, IsTaxId } from "class-validator";
+import { IsNotEmpty, IsString, IsTaxId } from 'class-validator';
 
 export class ContributeParam {
-    @IsNotEmpty()
-    @IsString()
-    username: string;
-    @IsNotEmpty()
-    @IsString()
-    projectName: string;
+  @IsNotEmpty()
+  @IsString()
+  username: string;
+  @IsNotEmpty()
+  @IsString()
+  projectName: string;
 }

@@ -1,10 +1,10 @@
-import { CurentUser } from "../auth/interface/curent-user.interface";
-import { AccessTokenPyload } from "../userToken/dtos/token.dto";
+import { CurentUser } from '../auth/interface/curent-user.interface';
+import { AccessTokenPyload } from '../userToken/dtos/token.dto';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: CurentUser
+      user?: CurentUser;
     }
   }
 }
@@ -17,11 +17,11 @@ export interface IEnvironmentVariables {
   ADMIN_PASSWORD: string;
   REFRESH_TOKEN_EXPIRE: string;
   ACCESS_TOKEN_EXPIRE: string;
-  REFRESH_TOKEN_SECRET: string
-  ACCESS_TOKEN_SECRET: string,
+  REFRESH_TOKEN_SECRET: string;
+  ACCESS_TOKEN_SECRET: string;
   EMAIL_USERNAME: string;
   EMAIL_PASSWORD: string;
   EMAIL_HOST: string;
 }
 
-export { };
+export {};

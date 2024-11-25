@@ -1,5 +1,5 @@
 export abstract class HashingService {
-    abstract hash(passwrod: string | Buffer): Promise<string>
+  abstract hash(passwrod: string | Buffer): Promise<string>;
 
-    abstract compare(password: string, hash: string): Promise<boolean>
+  abstract compare(password: string, hash: string): Promise<boolean>;
 }

@@ -1,9 +1,8 @@
-
 export class RefreshTokenPayload {
-    id: number;
+  id: number;
 }
 
 export class UserTokenParam {
-    accessToken: string;
-    refreshToken: string;
+  accessToken: string;
+  refreshToken: string;
 }

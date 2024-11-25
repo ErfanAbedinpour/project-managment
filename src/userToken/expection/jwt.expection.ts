@@ -1,1 +1,1 @@
-export class JwtExpecption extends Error { }
+export class JwtExpecption extends Error {}

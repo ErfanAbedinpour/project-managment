@@ -1,6 +1,6 @@
-import { Project } from "@prisma/client";
+import { Project } from '@prisma/client';
 
 export class UserProjectsDTO {
-    projects: Project[];
-    meta: object
+  projects: Project[];
+  meta: object;
 }

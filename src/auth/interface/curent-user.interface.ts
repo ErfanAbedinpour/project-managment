@@ -1,6 +1,6 @@
 export interface CurentUser {
-    email: string;
-    id: number,
-    role: string
-    username: string;
+  email: string;
+  id: number;
+  role: string;
+  username: string;
 }

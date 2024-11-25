@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserServices } from '../user/user.service';
@@ -9,18 +15,22 @@ import { UserProjectsDTO } from './dtos/user-projects.dto';
 
 @Injectable()
 export class ProjectService {
-  private readonly INVALID_NAME = "name is invalid please choose another name."
-  private readonly DB_ERROR = "Error during operation please try again."
-  private readonly USER_NOT_FOUND = "user does not found."
-  private readonly PROJECT_NOT_FOUND = "project does not found"
+  private readonly INVALID_NAME = 'name is invalid please choose another name.';
+  private readonly DB_ERROR = 'Error during operation please try again.';
+  private readonly USER_NOT_FOUND = 'user does not found.';
+  private readonly PROJECT_NOT_FOUND = 'project does not found';
 
-  constructor(private readonly prisma: PrismaService, private readonly userService: UserServices) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userService: UserServices,
+  ) {}
 
   async create(project: ProjectDTO, userId: number): Promise<Project> {
-    const isThisNameValid = await this.prisma.project.findFirst({ where: { AND: [{ ownerId: userId }, { name: project.name }] } });
+    const isThisNameValid = await this.prisma.project.findFirst({
+      where: { AND: [{ ownerId: userId }, { name: project.name }] },
+    });
 
-    if (isThisNameValid)
-      throw new BadRequestException(this.INVALID_NAME);
+    if (isThisNameValid) throw new BadRequestException(this.INVALID_NAME);
 
     try {
       const result = await this.prisma.project.create({
@@ -31,34 +41,36 @@ export class ProjectService {
           isPublic: project.isPublic,
           owner: {
             connect: {
-              id: userId
+              id: userId,
             },
-          }
+          },
         },
-        include: { owner: { select: { role: true } } }
-      })
-      return result
-
+        include: { owner: { select: { role: true } } },
+      });
+      return result;
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError)
         throw new BadRequestException(this.DB_ERROR);
 
-      throw new InternalServerErrorException()
+      throw new InternalServerErrorException();
     }
   }
 
-  async getRepository(params: { username: string, isAccessToPublic: boolean, page: number }): Promise<UserProjectsDTO> {
+  async getRepository(params: {
+    username: string;
+    isAccessToPublic: boolean;
+    page: number;
+  }): Promise<UserProjectsDTO> {
     let { page, username, isAccessToPublic } = params;
 
     let where: Prisma.ProjectWhereInput = {
-      owner: { username }
-    }
+      owner: { username },
+    };
 
     let take = 10;
     let skip = (page - 1) * take;
     // check user if itself request to this router send all project include private and public if not return just public project
-    if (!isAccessToPublic)
-      where.isPublic = true
+    if (!isAccessToPublic) where.isPublic = true;
 
     const totalRow = await this.prisma.project.count({ where });
     const totalpages = Math.ceil(totalRow / take);
@@ -75,36 +87,40 @@ export class ProjectService {
             display_name: true,
             profile: true,
             role: true,
-          }
+          },
         },
-      }
-    })
+      },
+    });
 
-    return { projects, meta: { totalpages, totalProjects: totalRow, page: page } };
-
+    return {
+      projects,
+      meta: { totalpages, totalProjects: totalRow, page: page },
+    };
   }
 
-  async getProjectByName(params: { username: string, name: string, isAccessToPrivate: boolean }): Promise<Project> {
+  async getProjectByName(params: {
+    username: string;
+    name: string;
+    isAccessToPrivate: boolean;
+  }): Promise<Project> {
     const { username, name, isAccessToPrivate } = params;
 
     const user = await this.userService.getUserByUsername(username);
-    if (!user)
-      throw new NotFoundException(this.USER_NOT_FOUND)
+    if (!user) throw new NotFoundException(this.USER_NOT_FOUND);
 
     const where: Prisma.ProjectWhereInput = {
       AND: [
         {
-          name
+          name,
         },
         {
-          ownerId: user.id
-        }
-      ]
-    }
+          ownerId: user.id,
+        },
+      ],
+    };
 
-    // if user itself request and if project is private throw not found error 
-    if (!isAccessToPrivate)
-      where.isPublic = true
+    // if user itself request and if project is private throw not found error
+    if (!isAccessToPrivate) where.isPublic = true;
 
     return this.prisma.project.findFirst({
       include: {
@@ -114,7 +130,7 @@ export class ProjectService {
             display_name: true,
             profile: true,
             id: true,
-          }
+          },
         },
         Task: {
           select: {
@@ -128,50 +144,48 @@ export class ProjectService {
                 id: true,
                 display_name: true,
                 createdAt: true,
-              }
-            }
-
-          }
-        }
+              },
+            },
+          },
+        },
       },
-      where
-    })
+      where,
+    });
   }
 
   async deleteProject(userId: number, name: string) {
-
     const project = await this.getProjectById(userId, name);
-    if (!project)
-      throw new NotFoundException(this.PROJECT_NOT_FOUND)
+    if (!project) throw new NotFoundException(this.PROJECT_NOT_FOUND);
     try {
-      return await this.prisma.project.delete({ where: { ownerId_name: { name, ownerId: userId } } });
+      return await this.prisma.project.delete({
+        where: { ownerId_name: { name, ownerId: userId } },
+      });
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError)
-        throw new NotFoundException(this.DB_ERROR)
+        throw new NotFoundException(this.DB_ERROR);
 
-      throw new InternalServerErrorException()
+      throw new InternalServerErrorException();
     }
   }
 
   async updateProject(params: {
     userId: number;
     name: string;
-    data: UpdateProjectDTO,
+    data: UpdateProjectDTO;
   }) {
-    const newPaylod = {}
+    const newPaylod = {};
     const { userId, name, data } = params;
 
-    const project = await this.prisma.project.findFirst({ where: { ownerId: userId, name } })
+    const project = await this.prisma.project.findFirst({
+      where: { ownerId: userId, name },
+    });
 
-    if (!project)
-      throw new NotFoundException(this.PROJECT_NOT_FOUND)
-
+    if (!project) throw new NotFoundException(this.PROJECT_NOT_FOUND);
 
     if (data.name) {
       const isNameTaken = await this.getProjectById(userId, name);
       // if this name is taken
-      if (isNameTaken)
-        throw new BadRequestException(this.INVALID_NAME);
+      if (isNameTaken) throw new BadRequestException(this.INVALID_NAME);
       newPaylod['name'] = data.name;
     }
 
@@ -180,16 +194,16 @@ export class ProjectService {
         where: {
           ownerId_name: {
             name,
-            ownerId: userId
-          }
+            ownerId: userId,
+          },
         },
         data,
       });
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError)
-        throw new NotFoundException(this.DB_ERROR)
-      console.error(err)
-      throw new InternalServerErrorException()
+        throw new NotFoundException(this.DB_ERROR);
+      console.error(err);
+      throw new InternalServerErrorException();
     }
   }
 
@@ -198,13 +212,13 @@ export class ProjectService {
       where: {
         AND: [
           {
-            name
+            name,
           },
           {
-            ownerId: userId
-          }
-        ]
-      }
-    })
+            ownerId: userId,
+          },
+        ],
+      },
+    });
   }
 }

@@ -20,7 +20,7 @@ import { AdminModule } from './admin/admin.module';
     }),
     CacheModule.register({
       isGlobal: true,
-      ttl: 30 * 60 * 1000
+      ttl: 30 * 60 * 1000,
     }),
     MailerModule.forRootAsync({
       useFactory: (env: ConfigService<IEnvironmentVariables>) => {
@@ -28,13 +28,13 @@ import { AdminModule } from './admin/admin.module';
           transport: {
             service: 'gmail',
             auth: {
-              user: env.getOrThrow<string>("EMAIL_USERNAME"),
-              pass: env.getOrThrow<string>("EMAIL_PASSWORD")
-            }
-          }
-        }
+              user: env.getOrThrow<string>('EMAIL_USERNAME'),
+              pass: env.getOrThrow<string>('EMAIL_PASSWORD'),
+            },
+          },
+        };
       },
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
     AuthModule,
     UserModule,
@@ -44,4 +44,4 @@ import { AdminModule } from './admin/admin.module';
     AdminModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
