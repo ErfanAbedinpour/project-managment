@@ -22,12 +22,11 @@ import { ProjectDTO } from './dtos/project.dto';
 @Controller('projects')
 export class ProjectController {
   private readonly NOT_ACCESS = 'you cannot access this Resource.';
-  constructor(private readonly projectService: ProjectService) {}
+  constructor(private readonly projectService: ProjectService) { }
 
   @Post()
   createProject(@Body() body: ProjectDTO, @GetUser('id') me: number) {
     try {
-      console.log(me);
       return this.projectService.create(body, me);
     } catch (err) {
       throw new InternalServerErrorException(err.message);

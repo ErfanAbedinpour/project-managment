@@ -98,7 +98,6 @@ export class ContributeService {
     if ((!userId && !project.isPublic) || (!project.isPublic && project.ownerId !== userId))
       throw new UnauthorizedException("You cannot Access this Project")
 
-    console.log(project)
 
     const contributers = await this.prisma.projectContributer.findMany({
       where: {

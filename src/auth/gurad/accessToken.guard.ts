@@ -9,7 +9,7 @@ import { AccessTokenService } from '../../userToken/jwt/accessToken.service';
 
 @Injectable()
 export class AccessTokenGurad implements CanActivate {
-  constructor(private readonly accessTokenService: AccessTokenService) {}
+  constructor(private readonly accessTokenService: AccessTokenService) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -18,7 +18,6 @@ export class AccessTokenGurad implements CanActivate {
     if (!token) throw new UnauthorizedException('header should be Bearer.');
 
     try {
-      console.log('token is ', token);
       const payload = await this.accessTokenService.verify(token);
       request.user = payload;
     } catch (err) {

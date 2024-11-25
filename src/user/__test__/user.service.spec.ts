@@ -109,7 +109,6 @@ describe('user Service', () => {
       id: user2.id,
       data: { username: 'newUser2' },
     });
-    console.log(newUser);
     //change user2 username to new username
     user2.username = newUser.username;
     // tests
