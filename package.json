@@ -20,7 +20,8 @@
     "migrate:dev": "dotenv -e .env.dev prisma migrate dev",
     "migrate:test": "dotenv -e .env.test prisma migrate dev",
     "seed": "prisma db seed",
-    "prepare": "husky"
+    "prepare": "husky",
+    "commitlint": "commitlint --edit"
   },
   "husky": {
     "hook": {
@@ -48,6 +49,8 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
