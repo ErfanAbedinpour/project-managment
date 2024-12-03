@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
+  ParseIntPipe,
   Patch,
   Res,
 } from '@nestjs/common';
@@ -17,10 +19,13 @@ import { ResponseSerializer } from '../interceptor/response.interceptor';
 import { GetUser } from '../auth/decorator/curent-user.decorator';
 import { CurentUser } from '../auth/interface/curent-user.interface';
 import { UserDTO } from '../auth/dtos/auth.dto';
+import { Auth, AuthStrategy } from 'src/auth/decorator/auth.decorator';
+import { Role } from 'src/auth/decorator/role.decorator';
+import { ROLE } from 'src/auth/enums/role.enum';
 
 @Controller('/user')
 export class UserController {
-  constructor(private readonly userService: UserServices) { }
+  constructor(private readonly userService: UserServices) {}
 
   @Get('me')
   me(@GetUser() me: CurentUser) {
@@ -67,5 +72,11 @@ export class UserController {
     } catch (err) {
       throw err;
     }
+  }
+
+  @Role(ROLE.ADMIN, ROLE.SUPER_USER)
+  @Delete(':userId')
+  DeleteUser(@Param('userId', ParseIntPipe) userId: number) {
+    return this.userService.deleteUser(userId);
   }
 }

@@ -19,10 +19,9 @@ import { UserDTO } from '../auth/dtos/auth.dto';
 
 @Injectable()
 export class UserServices {
+  private readonly USER_NOT_FOUND = 'user does not found.';
 
-  private readonly USER_NOT_FOUND = "user does not found."
-
-  private readonly INVLID_CODE = "code invalid."
+  private readonly INVLID_CODE = 'code invalid.';
 
   private readonly logger = new Logger(UserServices.name);
 
@@ -32,7 +31,7 @@ export class UserServices {
     private readonly util: UtilService,
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
     private readonly userToken: UserTokenService,
-  ) { }
+  ) {}
 
   async findUserById(id: number): Promise<User> {
     return this.prisma.user.findFirst({ where: { id } });
@@ -44,7 +43,7 @@ export class UserServices {
   }): Promise<Omit<UserDTO, 'password'>> {
     const { id, data } = params;
     const user = await this.findUserById(id);
-    if (!user) throw new NotFoundException(this.USER_NOT_FOUND)
+    if (!user) throw new NotFoundException(this.USER_NOT_FOUND);
 
     try {
       const newUser = await this.prisma.user.update({
@@ -88,13 +87,13 @@ export class UserServices {
 
       let code = this.util.generateUniqueCode(10000, 99999);
       // set user verify code into cache
-      await this.cache.set(`user-${user.id.toString()}`, code);
+      await this.cache.set(`user-${user.id}`, code);
 
       const info = await this.mailer.sendMail({
         to: user.email,
         from: 'Mini Github',
         subject: 'Delete account Verification Code',
-        text: `Your verification code is ${code} code will remove from 30 minute`,
+        text: `Your verification code is ${code} code will remove after 30 minutes`,
       });
 
       return { success: true, mailInfo: info };
@@ -118,15 +117,14 @@ export class UserServices {
       await this.cache.del(`user-${userId}`);
       return { success: true, user: user };
     } catch (err) {
-      if (err instanceof HttpException)
-        throw err;
+      if (err instanceof HttpException) throw err;
       this.logger.error(err);
       throw new InternalServerErrorException(err);
     }
   }
 
   async deleteUser(userId: number) {
-    const user = await this.findUserById(userId)
+    const user = await this.findUserById(userId);
 
     if (!user) throw new NotFoundException(this.USER_NOT_FOUND);
 
@@ -140,7 +138,7 @@ export class UserServices {
 
   async getUserByUsername(username: string) {
     const user = await this.prisma.user.findFirst({ where: { username } });
-    if (!user) throw new NotFoundException(this.USER_NOT_FOUND)
+    if (!user) throw new NotFoundException(this.USER_NOT_FOUND);
     return user;
   }
 }
