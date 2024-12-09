@@ -9,7 +9,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { IEnvironmentVariables } from './type';
 import { ProjectModule } from './project/project.module';
 import { ContributeModule } from './contribute/contribute.module';
-import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -41,7 +40,6 @@ import { AdminModule } from './admin/admin.module';
     UserTokenModule,
     ProjectModule,
     ContributeModule,
-    AdminModule,
   ],
 })
 export class AppModule {}
