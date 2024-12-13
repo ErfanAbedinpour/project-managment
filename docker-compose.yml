@@ -9,8 +9,6 @@ services:
     environment:
       - DATABASE_URL=${DOCKER_DATABASE_URL}
     depends_on:
-      migrate:
-        condition: service_completed_successfully
       psql:
         condition: service_started
     ports:
@@ -42,6 +40,8 @@ services:
     environment:
       - DATABASE_URL=${DOCKER_DATABASE_URL}
     command: [ "npx", "prisma", "migrate", "deploy" ]
+    profiles:
+      - migrate
     networks:
       - app
     depends_on:
