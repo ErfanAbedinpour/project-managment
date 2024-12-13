@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { UpdateProjectDTO } from './dtos/projects-update.dto';
 import { ProjectService } from './project.service';
-import { Project } from '@prisma/client';
 import { GetUser } from '../auth/decorator/curent-user.decorator';
 import { Auth, AuthStrategy } from '../auth/decorator/auth.decorator';
 import { ProjectDTO } from './dtos/project.dto';

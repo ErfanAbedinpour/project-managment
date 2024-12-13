@@ -3,7 +3,6 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -23,7 +22,7 @@ export class ProjectService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserServices,
-  ) {}
+  ) { }
 
   async create(project: ProjectDTO, userId: number): Promise<Project> {
     const isThisNameValid = await this.prisma.project.findFirst({

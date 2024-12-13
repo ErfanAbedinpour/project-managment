@@ -154,7 +154,8 @@ The `Activity` table logs all significant actions performed within the project, 
 
 - **GET /api/user/me**: Retrieve the logged-in user’s profile.
 - **PATCH /api/user/me**: Update logged-in user’s information.
-- **DELETE /api/user/me**: Delete logged-in user’s account.
+- **DELETE /api/user/me**: send verification code to user email for delete account.
+- **DELETE /api/user/me/verify**: send verification code to user email for delete account.
 
 ### Project Routes
 
