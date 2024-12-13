@@ -31,7 +31,7 @@ export class UserServices {
     private readonly util: UtilService,
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
     private readonly userToken: UserTokenService,
-  ) {}
+  ) { }
 
   async findUserById(id: number): Promise<User> {
     return this.prisma.user.findFirst({ where: { id } });
@@ -141,4 +141,23 @@ export class UserServices {
     if (!user) throw new NotFoundException(this.USER_NOT_FOUND);
     return user;
   }
+
+  async getMe(userId: number) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: userId
+      },
+      include: {
+        Project: true,
+        Task: true,
+        UserProjects: true
+      }
+    })
+
+    if (!user)
+      throw new NotFoundException(this.USER_NOT_FOUND)
+
+    return user;
+  }
+
 }

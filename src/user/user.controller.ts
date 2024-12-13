@@ -19,17 +19,14 @@ import { ResponseSerializer } from '../interceptor/response.interceptor';
 import { GetUser } from '../auth/decorator/curent-user.decorator';
 import { CurentUser } from '../auth/interface/curent-user.interface';
 import { UserDTO } from '../auth/dtos/auth.dto';
-import { Auth, AuthStrategy } from 'src/auth/decorator/auth.decorator';
-import { Role } from 'src/auth/decorator/role.decorator';
-import { ROLE } from 'src/auth/enums/role.enum';
 
-@Controller('/user')
+@Controller('/user/me')
 export class UserController {
-  constructor(private readonly userService: UserServices) {}
+  constructor(private readonly userService: UserServices) { }
 
-  @Get('me')
-  me(@GetUser() me: CurentUser) {
-    return me;
+  @Get()
+  me(@GetUser('id') userId: number) {
+    this.userService.getMe(userId)
   }
 
   // update user
@@ -45,8 +42,6 @@ export class UserController {
         id: user.id,
         data: body,
       });
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
       return newUser;
     } catch (err) {
       throw err;
@@ -72,11 +67,5 @@ export class UserController {
     } catch (err) {
       throw err;
     }
-  }
-
-  @Role(ROLE.ADMIN, ROLE.SUPER_USER)
-  @Delete(':userId')
-  DeleteUser(@Param('userId', ParseIntPipe) userId: number) {
-    return this.userService.deleteUser(userId);
   }
 }
