@@ -71,7 +71,7 @@ export class ProjectController {
     }
   }
 
-  @Patch('/:name')
+  @Patch(':name')
   updateProject(
     @Param('name') name: string,
     @Body() body: UpdateProjectDTO,

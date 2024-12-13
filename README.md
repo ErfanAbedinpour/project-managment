@@ -196,5 +196,8 @@ The `Activity` table logs all significant actions performed within the project, 
   
 --- 
 
+## TODO:
+- [] Fix Project resource and user fix 
+
 This project allows fine-grained permissions for better management of tasks and collaboration within projects.  
 این پروژه اجازه می‌دهد تا سطح دسترسی دقیقی برای مدیریت بهتر تسک‌ها و همکاری در پروژه‌ها داشته باشید.

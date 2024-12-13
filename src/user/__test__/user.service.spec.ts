@@ -1,17 +1,15 @@
 import { Test } from '@nestjs/testing';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserServices } from '../user.service';
-import { Prisma, PrismaClient, User } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
-import { CreateUserDTO } from 'src/auth/dtos/auth.dto';
-import { AuthService } from 'src/auth/auth.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { UtilModule } from '../../util/util.module';
 import { CacheModule } from '@nestjs/cache-manager';
-import { UserTokenService } from '../../userToken/userToken.service';
 import { UserTokenModule } from '../../userToken/userToken.module';
+import { CreateUserDTO } from '../../auth/dtos/create-user-dto';
 
 describe('user Service', () => {
   let userService: UserServices;
@@ -22,6 +20,7 @@ describe('user Service', () => {
     password: '12341234',
     display_name: 'nice',
   };
+
   const user2 = {
     id: 2,
     username: 'user2',
@@ -29,6 +28,7 @@ describe('user Service', () => {
     password: '12341234',
     display_name: 'nice',
   };
+
   const user3 = {
     id: 3,
     username: 'user3',
