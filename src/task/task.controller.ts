@@ -2,14 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from 
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { GetUser } from '../auth/decorator/curent-user.decorator';
 
 @Controller('task/:projectId')
 export class TaskController {
   constructor(private readonly taskService: TaskService) { }
 
   @Post()
-  create(@Param("projectId", ParseIntPipe) projectId: number, @Body() createTaskDto: CreateTaskDto) {
-    return this.taskService.create(projectId, createTaskDto);
+  create(@GetUser('id') userId: number, @Param("projectId", ParseIntPipe) projectId: number, @Body() createTaskDto: CreateTaskDto) {
+    return this.taskService.create(userId, projectId, createTaskDto);
   }
 
   @Get()
