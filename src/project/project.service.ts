@@ -57,10 +57,10 @@ export class ProjectService {
 
   async getRepository(params: {
     username: string;
-    isAccessToPublic: boolean;
+    isAccessToPrivate: boolean;
     page: number;
   }): Promise<UserProjectsDTO> {
-    let { page, username, isAccessToPublic } = params;
+    let { page, username, isAccessToPrivate } = params;
 
     let where: Prisma.ProjectWhereInput = {
       owner: { username },
@@ -69,7 +69,7 @@ export class ProjectService {
     let take = 10;
     let skip = (page - 1) * take;
     // check user if itself request to this router send all project include private and public if not return just public project
-    if (!isAccessToPublic) where.isPublic = true;
+    if (!isAccessToPrivate) where.isPublic = true;
 
     const totalRow = await this.prisma.project.count({ where });
     const totalpages = Math.ceil(totalRow / take);
@@ -99,10 +99,10 @@ export class ProjectService {
 
   async getProjectByName(params: {
     username: string;
-    name: string;
+    projectName: string;
     isAccessToPrivate: boolean;
   }): Promise<Project> {
-    const { username, name, isAccessToPrivate } = params;
+    const { username, projectName, isAccessToPrivate } = params;
 
     const user = await this.userService.getUserByUsername(username);
     if (!user) throw new NotFoundException(this.USER_NOT_FOUND);
@@ -110,7 +110,7 @@ export class ProjectService {
     const where: Prisma.ProjectWhereInput = {
       AND: [
         {
-          name,
+          name: projectName,
         },
         {
           ownerId: user.id,
@@ -152,12 +152,12 @@ export class ProjectService {
     });
   }
 
-  async deleteProject(userId: number, name: string) {
-    const project = await this.getProjectById(userId, name);
+  async deleteProject(userId: number, projectName: string) {
+    const project = await this.getProjectById(userId, projectName);
     if (!project) throw new NotFoundException(this.PROJECT_NOT_FOUND);
     try {
       return await this.prisma.project.delete({
-        where: { ownerId_name: { name, ownerId: userId } },
+        where: { ownerId_name: { name: projectName, ownerId: userId } },
       });
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError)
@@ -169,20 +169,20 @@ export class ProjectService {
 
   async updateProject(params: {
     userId: number;
-    name: string;
+    prjName: string;
     data: UpdateProjectDTO;
   }) {
     const newPaylod = {};
-    const { userId, name, data } = params;
+    const { userId, prjName, data } = params;
 
     const project = await this.prisma.project.findFirst({
-      where: { ownerId: userId, name },
+      where: { ownerId: userId, name: prjName },
     });
 
     if (!project) throw new NotFoundException(this.PROJECT_NOT_FOUND);
 
     if (data.name) {
-      const isNameTaken = await this.getProjectById(userId, name);
+      const isNameTaken = await this.getProjectById(userId, prjName);
       // if this name is taken
       if (isNameTaken) throw new BadRequestException(this.INVALID_NAME);
       newPaylod['name'] = data.name;
@@ -192,7 +192,7 @@ export class ProjectService {
       return await this.prisma.project.update({
         where: {
           ownerId_name: {
-            name,
+            name: prjName,
             ownerId: userId,
           },
         },

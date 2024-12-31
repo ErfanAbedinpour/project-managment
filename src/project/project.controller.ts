@@ -34,7 +34,7 @@ export class ProjectController {
 
   //Get user Repository
   @Auth(AuthStrategy.None)
-  @Get('/:username')
+  @Get(':username')
   getUserRepository(
     @Param('username') username: string,
     @Query('page', ParseIntPipe) page: number,
@@ -43,20 +43,20 @@ export class ProjectController {
     return this.projectService.getRepository({
       username: username,
       page: page || 1,
-      isAccessToPublic: me === username,
+      isAccessToPrivate: me === username,
     });
   }
 
   @Auth(AuthStrategy.None)
-  @Get('/:username/:name')
+  @Get(':username:projectName')
   async getProjectByName(
-    @Param('name') name: string,
+    @Param('projectName') prjName: string,
     @Param('username') username: string,
     @GetUser('username') me: string,
   ) {
     try {
       const project = await this.projectService.getProjectByName({
-        name,
+        projectName: prjName,
         username: username,
         isAccessToPrivate: me === username,
       });
@@ -71,17 +71,17 @@ export class ProjectController {
     }
   }
 
-  @Patch(':name')
+  @Patch(':projectName')
   updateProject(
-    @Param('name') name: string,
+    @Param('projectName') prjName: string,
     @Body() body: UpdateProjectDTO,
     @GetUser('id') me: number,
   ) {
-    return this.projectService.updateProject({ data: body, name, userId: me });
+    return this.projectService.updateProject({ data: body, prjName: prjName, userId: me });
   }
 
-  @Delete(':name')
-  async deleteProject(@Param('name') name: string, @GetUser('id') me: number) {
-    return this.projectService.deleteProject(me, name);
+  @Delete(':projectName')
+  async deleteProject(@Param('projectName') prjName: string, @GetUser('id') me: number) {
+    return this.projectService.deleteProject(me, prjName);
   }
 }
