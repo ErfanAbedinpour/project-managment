@@ -17,10 +17,10 @@ import { ProjectService } from './project.service';
 import { GetUser } from '../auth/decorator/curent-user.decorator';
 import { Auth, AuthStrategy } from '../auth/decorator/auth.decorator';
 import { ProjectDTO } from './dtos/project.dto';
+import { ErrorMessages } from '../ResponseMessages/ErrorMessages';
 
 @Controller('projects')
 export class ProjectController {
-  private readonly NOT_ACCESS = 'you cannot access this Resource.';
   constructor(private readonly projectService: ProjectService) { }
 
   @Post()
@@ -55,15 +55,11 @@ export class ProjectController {
     @GetUser('username') me: string,
   ) {
     try {
-      const project = await this.projectService.getProjectByName({
+      return this.projectService.getProjectByName({
         projectName: prjName,
         username: username,
         isAccessToPrivate: me === username,
       });
-
-      if (!project) throw new NotFoundException('project not found. ');
-
-      return project;
     } catch (err) {
       if (err instanceof HttpException) throw err;
       console.error(err);

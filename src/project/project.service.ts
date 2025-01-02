@@ -11,13 +11,10 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UpdateProjectDTO } from './dtos/projects-update.dto';
 import { ProjectDTO } from './dtos/project.dto';
 import { UserProjectsDTO } from './dtos/user-projects.dto';
+import { ErrorMessages } from '../ResponseMessages/ErrorMessages';
 
 @Injectable()
 export class ProjectService {
-  private readonly INVALID_NAME = 'name is invalid please choose another name.';
-  private readonly DB_ERROR = 'Error during operation please try again.';
-  private readonly USER_NOT_FOUND = 'user does not found.';
-  private readonly PROJECT_NOT_FOUND = 'project does not found';
 
   constructor(
     private readonly prisma: PrismaService,
@@ -29,7 +26,7 @@ export class ProjectService {
       where: { AND: [{ ownerId: userId }, { name: project.name }] },
     });
 
-    if (isThisNameValid) throw new BadRequestException(this.INVALID_NAME);
+    if (isThisNameValid) throw new BadRequestException(ErrorMessages.INVALID_NAME);
 
     try {
       const result = await this.prisma.project.create({
@@ -49,7 +46,7 @@ export class ProjectService {
       return result;
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError)
-        throw new BadRequestException(this.DB_ERROR);
+        throw new BadRequestException(ErrorMessages.DB_ERROR);
 
       throw new InternalServerErrorException();
     }
@@ -105,7 +102,8 @@ export class ProjectService {
     const { username, projectName, isAccessToPrivate } = params;
 
     const user = await this.userService.getUserByUsername(username);
-    if (!user) throw new NotFoundException(this.USER_NOT_FOUND);
+
+    if (!user) throw new NotFoundException(ErrorMessages.USER_NOT_FOUND);
 
     const where: Prisma.ProjectWhereInput = {
       AND: [
@@ -121,7 +119,7 @@ export class ProjectService {
     // if user itself request and if project is private throw not found error
     if (!isAccessToPrivate) where.isPublic = true;
 
-    return this.prisma.project.findFirst({
+    const project = await this.prisma.project.findFirst({
       include: {
         owner: {
           select: {
@@ -150,23 +148,31 @@ export class ProjectService {
       },
       where,
     });
+
+    if (!project)
+      throw new NotFoundException(ErrorMessages.PROJECT_NOT_FOUND)
+    return project
   }
 
+  // delete project
   async deleteProject(userId: number, projectName: string) {
+    // find project 
     const project = await this.getProjectById(userId, projectName);
-    if (!project) throw new NotFoundException(this.PROJECT_NOT_FOUND);
+    if (!project) throw new NotFoundException(ErrorMessages.PROJECT_NOT_FOUND);
+    // remove project
     try {
       return await this.prisma.project.delete({
         where: { ownerId_name: { name: projectName, ownerId: userId } },
       });
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError)
-        throw new NotFoundException(this.DB_ERROR);
+        throw new NotFoundException(ErrorMessages.DB_ERROR);
 
       throw new InternalServerErrorException();
     }
   }
 
+  // update project
   async updateProject(params: {
     userId: number;
     prjName: string;
@@ -179,12 +185,12 @@ export class ProjectService {
       where: { ownerId: userId, name: prjName },
     });
 
-    if (!project) throw new NotFoundException(this.PROJECT_NOT_FOUND);
+    if (!project) throw new NotFoundException(ErrorMessages.PROJECT_NOT_FOUND);
 
     if (data.name) {
       const isNameTaken = await this.getProjectById(userId, prjName);
       // if this name is taken
-      if (isNameTaken) throw new BadRequestException(this.INVALID_NAME);
+      if (isNameTaken) throw new BadRequestException(ErrorMessages.INVALID_NAME);
       newPaylod['name'] = data.name;
     }
 
@@ -200,12 +206,13 @@ export class ProjectService {
       });
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError)
-        throw new NotFoundException(this.DB_ERROR);
+        throw new NotFoundException(ErrorMessages.DB_ERROR);
       console.error(err);
       throw new InternalServerErrorException();
     }
   }
 
+  // find project ById
   getProjectById(userId: number, name: string) {
     return this.prisma.project.findFirst({
       where: {
