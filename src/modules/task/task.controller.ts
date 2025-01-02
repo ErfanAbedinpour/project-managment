@@ -4,23 +4,23 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { GetUser } from '../auth/decorator/curent-user.decorator';
 
-@Controller('task/:projectId')
+@Controller(':username/:projectName/task')
 export class TaskController {
   constructor(private readonly taskService: TaskService) { }
 
   @Post()
-  create(@GetUser('id') userId: number, @Param("projectId", ParseIntPipe) projectId: number, @Body() createTaskDto: CreateTaskDto) {
-    return this.taskService.create(userId, projectId, createTaskDto);
+  create(@GetUser('id') userId: number, @Param("username") username: string, @Param("projectName") projectName: string, @Body() createTaskDto: CreateTaskDto) {
+    return this.taskService.create(userId, username, projectName, createTaskDto);
   }
 
   @Get()
-  findAll(@Param("projectId", ParseIntPipe) projectId: number) {
-    return this.taskService.findAll(projectId);
+  findAll(@Param("username") username: string, @Param("projectName") prjName: string) {
+    return this.taskService.findAll(username, prjName);
   }
 
-  @Get(':id')
-  findOne(@Param("projectId", ParseIntPipe) projectId: number, @Param('id', ParseIntPipe) taskId: number) {
-    return this.taskService.findOne(projectId, taskId);
+  @Get(':taskID')
+  findOne(@Param("username") username: string, @Param('projectName') prjName: string, @Param("taskID", ParseIntPipe) taskId: number) {
+    return this.taskService.findOne(username, prjName, taskId);
   }
 
   @Patch(':id')

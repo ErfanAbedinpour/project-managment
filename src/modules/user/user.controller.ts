@@ -35,15 +35,11 @@ export class UserController {
     @Body() body: UserUpdatedBodyDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
-    try {
-      const newUser = await this.userService.updateUser({
-        id: user.id,
-        data: body,
-      });
-      return newUser;
-    } catch (err) {
-      throw err;
-    }
+    return this.userService.updateUser({
+      id: user.id,
+      data: body,
+    });
+
   }
 
   @Delete()
@@ -53,17 +49,10 @@ export class UserController {
 
   @Delete('verify')
   async verifyCode(
-    @Res({ passthrough: true }) res: Response,
     @Body() body: VerifyCodeDTO,
     @GetUser() me: CurentUser,
   ) {
-    try {
-      const result = await this.userService.verifyCode(me.id, body.code);
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
-      return result;
-    } catch (err) {
-      throw err;
-    }
+    return this.userService.verifyCode(me.id, body.code);
+
   }
 }

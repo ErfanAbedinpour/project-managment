@@ -17,7 +17,6 @@ import { ProjectService } from './project.service';
 import { GetUser } from '../auth/decorator/curent-user.decorator';
 import { Auth, AuthStrategy } from '../auth/decorator/auth.decorator';
 import { ProjectDTO } from './dtos/project.dto';
-import { ErrorMessages } from '../../ResponseMessages/ErrorMessages';
 
 @Controller('projects')
 export class ProjectController {
@@ -54,17 +53,11 @@ export class ProjectController {
     @Param('username') username: string,
     @GetUser('username') me: string,
   ) {
-    try {
-      return this.projectService.getProjectByName({
-        projectName: prjName,
-        username: username,
-        isAccessToPrivate: me === username,
-      });
-    } catch (err) {
-      if (err instanceof HttpException) throw err;
-      console.error(err);
-      throw new InternalServerErrorException(err.message);
-    }
+    return this.projectService.getProjectByName({
+      projectName: prjName,
+      username: username,
+      isAccessToPrivate: me === username,
+    });
   }
 
   @Patch(':projectName')

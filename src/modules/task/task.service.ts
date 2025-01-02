@@ -13,8 +13,8 @@ export class TaskService {
   private readonly NOT_ACCESS_TO_PROJECT = "you cannot access to this project"
   private logger = new Logger(TaskService.name);
 
-  async create(userId: number, projectId: number, { title, description, status }: CreateTaskDto) {
-    const project = await this.prisma.project.findFirst({ where: { id: projectId } })
+  async create(userId: number, username: string, projectName: string, { title, description, status }: CreateTaskDto) {
+    const project = await this.prisma.project.findFirst({ where: { AND: [{ owner: { username } }, { name: projectName }] } })
     if (project.ownerId !== userId)
       throw new ForbiddenException(this.NOT_ACCESS_TO_PROJECT)
 
@@ -40,10 +40,13 @@ export class TaskService {
 
   }
 
-  async findAll(projectId: number) {
+  async findAll(username: string, prjName: string) {
     const task = await this.prisma.task.findMany({
       where: {
-        ProjectId: projectId,
+        AND: [
+          { Project: { owner: { username } } },
+          { Project: { name: prjName } }
+        ]
       },
       include: { User: { select: { username: true, id: true, email: true, profile: true } } }
     })
@@ -51,10 +54,17 @@ export class TaskService {
     return task;
   }
 
-  async findOne(projectId: number, taskId: number) {
+  async findOne(username: string, prjName: string, taskId: number) {
     const task = await this.prisma.task.findFirst({
       where: {
-        ProjectId: projectId,
+        AND: [
+          {
+            Project: { owner: { username } }
+          },
+          {
+            Project: { name: prjName }
+          }
+        ],
         id: taskId
       },
       include: {

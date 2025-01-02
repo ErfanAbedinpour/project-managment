@@ -145,7 +145,7 @@ The `Activity` table logs all significant actions performed within the project, 
 
 ### Authentication Routes
 
-- **POST /api/auth/register**: Register a new user.  
+- **POST /api/auth/singup**: Register a new user.  
 - **POST /api/auth/login**: User login.
 - **POST /api/auth/logout**: logout User
 - **POST /api/auth/token**: generate new tokens
@@ -159,23 +159,24 @@ The `Activity` table logs all significant actions performed within the project, 
 
 ### Project Routes
 
-- **POST /api/projects**: Create a new project.
-- **GET /api/projects/:username**: Get a list of public projects or the logged-in user’s private projects.
-- **GET /api/projects/:username/:projectName**: Get details of a specific project.
-- **PATCH /api/projects/:projectName**: Update a specific project (owner only).
-- **DELETE /api/projects/:projectNaem**: Delete a specific project (owner only).
+- **POST /api/project**: Create a new project.
+- **GET /api/project/:username**: Get a list of public projects or the logged-in user’s private projects.
+- **GET /api/project/:username/:projectName**: Get details of a specific project.
+- **PATCH /api/project/:projectName**: Update a specific project (owner only).
+- **DELETE /api/project/:projectNaem**: Delete a specific project (owner only).
 
 ### Contributor Routes
 
-- **POST /api/projects/:projectID/contributors**: Add a contributor to a project (owner only).
-- **DELETE /api/projects/:projectID/contributors/:userId**: Remove a contributor from a project (owner only).
+- **GET /api/:username/:projectName/contributor**: Get Contributers Of Project 
+- **POST /api/:username/:projectName/contributor**: contributor to a project
+- **DELETE /api/:username/:projectName/contributor/:userId**: Remove a contributor from a project (owner only).
 
 ### Task Routes
 
-- **POST /api/:projectID/task**: Create a new task within a project (owner only).
-- **GET /api/:projectID/task**: Get a list of tasks within a project.
-- **PATCH /api/:projectID/task/:taskID**: Update a specific task (owner only).
-- **DELETE /api/:projectID/task/:taskID**: Delete a specific task (owner only).
+- **POST /api/:username/:projectName/task**: Create a new task within a project (owner only).
+- **GET /api/:username/:projectName/task**: Get a list of tasks within a project.
+- **PATCH /api/:username/:projectName/:taskID**: Update a specific task (owner only).
+- **DELETE /api/:username/:projectName/:taskID**: Delete a specific task (owner only).
 
 ---
 
@@ -196,8 +197,6 @@ The `Activity` table logs all significant actions performed within the project, 
   
 --- 
 
-## TODO:
-- [] Fix Project resource and user fix 
 
 This project allows fine-grained permissions for better management of tasks and collaboration within projects.  
 این پروژه اجازه می‌دهد تا سطح دسترسی دقیقی برای مدیریت بهتر تسک‌ها و همکاری در پروژه‌ها داشته باشید.

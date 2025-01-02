@@ -10,9 +10,9 @@ import { ContributeService } from './contribute.service';
 import { GetUser } from '../auth/decorator/curent-user.decorator';
 import { Auth, AuthStrategy } from '../auth/decorator/auth.decorator';
 
-@Controller('project/:username/:projectName/contribute')
+@Controller(':username/:projectName/contribute')
 export class ContributeController {
-  constructor(private readonly service: ContributeService) {}
+  constructor(private readonly service: ContributeService) { }
 
   @Post()
   contributeToProject(

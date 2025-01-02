@@ -29,7 +29,6 @@ import {
   ApiHeader,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
@@ -58,21 +57,9 @@ export class AuthController {
   @Post('login')
   async login(
     @Body() body: LoginUserDTO,
-    @Res({ passthrough: true }) res: Response,
   ): Promise<LoginResponse> {
     try {
-      const { accessToken, refreshToken } = await this.authService.login(body);
-      // store accessToken and refreshToken into cookie
-      res.cookie('accessToken', accessToken, {
-        httpOnly: true,
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 + 1000),
-      });
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 + 1000),
-      });
-
-      return { accessToken, refreshToken };
+      return this.authService.login(body);
     } catch (err) {
       throw err;
     }
@@ -95,15 +82,9 @@ export class AuthController {
   @Auth(AuthStrategy.Bearer)
   async logout(
     @Body() body: RefreshTokenDto,
-    @Res({ passthrough: true }) res: Response,
   ): Promise<LogOutResponse> {
     try {
-      const result = await this.authService.logOut(body.refreshToken);
-      if (!result.success) throw new ForbiddenException('unknown error. ');
-
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
-      return result;
+      return this.authService.logOut(body.refreshToken);
     } catch (err) {
       throw err;
     }
@@ -122,12 +103,9 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<RefreshTokenResponse> {
     try {
-      const { accessToken, refreshToken } = await this.authService.refreshToken(
+      return this.authService.refreshToken(
         body.refreshToken,
       );
-      response.cookie('accessToken', accessToken);
-      response.cookie('refreshToken', refreshToken);
-      return { accessToken, refreshToken };
     } catch (err) {
       throw err;
     }
