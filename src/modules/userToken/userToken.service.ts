@@ -10,7 +10,7 @@ export class UserTokenService {
     private readonly prisma: PrismaService,
     private readonly AccessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
-  ) {}
+  ) { }
 
   async getKeys(
     user: User,

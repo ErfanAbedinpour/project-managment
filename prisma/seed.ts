@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { config } from 'dotenv';
 import { join } from 'path';
 import { IEnvironmentVariables } from '../src/type';
-import { BcryptHashing } from '../src/auth/hash/bcrypt.service';
+import { BcryptHashing } from '../src/modules/auth/hash/bcrypt.service';
 
 config({ path: join(process.cwd(), '.env.dev') });
 const prisma = new PrismaClient();

@@ -11,7 +11,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { PROJECT_STATUS } from '../../type/enums';
+import { PROJECT_STATUS } from '../../../type/enums';
 
 @ValidatorConstraint({ name: 'AtOneLeastRequired', async: false })
 class AtOneLeastRequired implements ValidatorConstraintInterface {

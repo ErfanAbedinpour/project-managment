@@ -17,7 +17,7 @@ import { ProjectService } from './project.service';
 import { GetUser } from '../auth/decorator/curent-user.decorator';
 import { Auth, AuthStrategy } from '../auth/decorator/auth.decorator';
 import { ProjectDTO } from './dtos/project.dto';
-import { ErrorMessages } from '../ResponseMessages/ErrorMessages';
+import { ErrorMessages } from '../../ResponseMessages/ErrorMessages';
 
 @Controller('projects')
 export class ProjectController {

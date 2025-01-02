@@ -1,5 +1,5 @@
-import { CurentUser } from '../auth/interface/curent-user.interface';
-import { AccessTokenPyload } from '../userToken/dtos/token.dto';
+import { CurentUser } from '../modules/auth/interface/curent-user.interface';
+import { AccessTokenPyload } from '../modules/userToken/dtos/token.dto';
 
 declare global {
   namespace Express {
@@ -24,4 +24,4 @@ export interface IEnvironmentVariables {
   EMAIL_HOST: string;
 }
 
-export {};
+export { };

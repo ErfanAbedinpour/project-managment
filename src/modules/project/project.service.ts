@@ -5,13 +5,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { UserServices } from '../user/user.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UpdateProjectDTO } from './dtos/projects-update.dto';
 import { ProjectDTO } from './dtos/project.dto';
 import { UserProjectsDTO } from './dtos/user-projects.dto';
-import { ErrorMessages } from '../ResponseMessages/ErrorMessages';
+import { ErrorMessages } from '../../ResponseMessages/ErrorMessages';
 
 @Injectable()
 export class ProjectService {

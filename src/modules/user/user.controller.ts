@@ -13,7 +13,7 @@ import {
   UserUpdatedBodyDTO,
   VerifyCodeDTO,
 } from './dtos/user.dto';
-import { ResponseSerializer } from '../interceptor/response.interceptor';
+import { ResponseSerializer } from '../../interceptor/response.interceptor';
 import { GetUser } from '../auth/decorator/curent-user.decorator';
 import { CurentUser } from '../auth/interface/curent-user.interface';
 import { UserDTO } from '../auth/dtos/auth.dto';

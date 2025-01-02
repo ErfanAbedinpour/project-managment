@@ -6,7 +6,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { PROJECT_STATUS } from '../../type/enums';
+import { PROJECT_STATUS } from '../../../type/enums';
 
 export class ProjectDTO {
   @IsNotEmpty()

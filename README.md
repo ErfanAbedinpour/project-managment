@@ -167,15 +167,15 @@ The `Activity` table logs all significant actions performed within the project, 
 
 ### Contributor Routes
 
-- **POST /api/projects/:id/contributors**: Add a contributor to a project (owner only).
-- **DELETE /api/projects/:id/contributors/:userId**: Remove a contributor from a project (owner only).
+- **POST /api/projects/:projectID/contributors**: Add a contributor to a project (owner only).
+- **DELETE /api/projects/:projectID/contributors/:userId**: Remove a contributor from a project (owner only).
 
 ### Task Routes
 
-- **POST /api/projects/:id/tasks**: Create a new task within a project (owner only).
-- **GET /api/projects/:id/tasks**: Get a list of tasks within a project.
-- **PATCH /api/projects/:id/tasks/:taskId**: Update a specific task (owner only).
-- **DELETE /api/projects/:id/tasks/:taskId**: Delete a specific task (owner only).
+- **POST /api/:projectID/task**: Create a new task within a project (owner only).
+- **GET /api/:projectID/task**: Get a list of tasks within a project.
+- **PATCH /api/:projectID/task/:taskID**: Update a specific task (owner only).
+- **DELETE /api/:projectID/task/:taskID**: Delete a specific task (owner only).
 
 ---
 

@@ -26,4 +26,4 @@ import { AccessTokenGurad } from './gurad/accessToken.guard';
     AccessTokenGurad,
   ],
 })
-export class AuthModule {}
+export class AuthModule { }

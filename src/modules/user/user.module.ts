@@ -19,4 +19,4 @@ import { RoleGuard } from '../auth/gurad/role.guard';
     },
   ],
 })
-export class UserModule {}
+export class UserModule { }

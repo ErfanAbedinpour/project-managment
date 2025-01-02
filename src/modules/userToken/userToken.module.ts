@@ -24,4 +24,4 @@ import refreshJwtConfig from './config/refresh.jwt.config';
 
   providers: [UserTokenService, AccessTokenService, RefreshTokenService],
 })
-export class UserTokenModule {}
+export class UserTokenModule { }

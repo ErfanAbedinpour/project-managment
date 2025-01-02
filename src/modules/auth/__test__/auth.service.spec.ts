@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
-import { PrismaService } from '../../../src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { UserTokenService } from '../../../src/userToken/userToken.service';
 import { RefreshTokenService } from '../../../src/userToken/jwt/refreshToken.service';
 import { HashingService } from '../hash/hash.service';

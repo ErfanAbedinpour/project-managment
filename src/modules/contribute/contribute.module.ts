@@ -11,4 +11,4 @@ import { UserTokenModule } from '../userToken/userToken.module';
   controllers: [ContributeController],
   providers: [ContributeService],
 })
-export class ContributeModule {}
+export class ContributeModule { }

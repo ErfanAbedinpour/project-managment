@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
 import { join } from 'path';
-import { UserTokenModule } from './userToken/userToken.module';
+import { UserTokenModule } from './modules/userToken/userToken.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { IEnvironmentVariables } from './type';
-import { ProjectModule } from './project/project.module';
-import { ContributeModule } from './contribute/contribute.module';
-import { TaskModule } from './task/task.module';
+import { ProjectModule } from './modules/project/project.module';
+import { ContributeModule } from './modules/contribute/contribute.module';
+import { TaskModule } from './modules/task/task.module';
 
 @Module({
   imports: [
@@ -44,4 +44,4 @@ import { TaskModule } from './task/task.module';
     TaskModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

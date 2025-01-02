@@ -14,7 +14,7 @@ import {
   LogOutResponse,
   RefreshTokenResponse,
 } from './dtos/auth.response.dto';
-import { ResponseSerializer } from '../interceptor/response.interceptor';
+import { ResponseSerializer } from '../../interceptor/response.interceptor';
 import { Response } from 'express';
 import { CreateUserDTO } from './dtos/create-user-dto';
 import { LoginUserDTO } from './dtos/auth.login.dto';
@@ -36,7 +36,7 @@ import {
 @Controller('auth')
 @Auth(AuthStrategy.None)
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @ApiCreatedResponse({
     description: 'user created succesfully',

@@ -15,7 +15,7 @@ import { UserServices } from '../user/user.service';
 import { userInfo } from 'os';
 import { retry, throwError } from 'rxjs';
 import { Project, ProjectContributer } from '@prisma/client';
-import { ProjectController } from 'src/project/project.controller';
+import { ProjectController } from 'src/modules/project/project.controller';
 
 @Injectable()
 export class ContributeService {
@@ -32,7 +32,7 @@ export class ContributeService {
     private readonly prisma: PrismaService,
     private readonly projectService: ProjectService,
     private readonly userService: UserServices,
-  ) {}
+  ) { }
 
   private async isUserContributed(params: {
     userId: number;
